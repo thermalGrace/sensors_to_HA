@@ -5,3 +5,4 @@ code.py - initial debugging and testing sensor (micropython, just streams values
 main.py - code for sensing and streaming data for visualization
 processing_ide_visuals.py - local visualizer, runs with processing IDE
 rd03d.py - micropython library for mmWave radar we have 
+simple.py - mqtt library for pico 2 w, micropython
