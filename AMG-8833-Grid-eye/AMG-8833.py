@@ -69,3 +69,4 @@ while True:
     fig.canvas.flush_events() # for real-time plot
     print("Thermistor Temperature: {0:2.2f}".format(T_thermistor)) # print thermistor temp
     
+   
