@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <WiFi.h>
+#include <PubSubClient.h>
 #include "MTP40F.h"
 
 const int MTP40F_RX_PIN = 6;  // Pico GPIO 6 connects to MTP40F TX (pin 6)
@@ -9,7 +10,15 @@ const int MTP40F_TX_PIN = 7;  // Pico GPIO 7 connects to MTP40F RX (pin 7)
 const char *WIFI_SSID = "thermal_grace_iot_24";
 const char *WIFI_PASSWORD = "45_#_101_G.";
 
+// MQTT settings
+const char *MQTT_HOST = "192.168.50.176";
+const uint16_t MQTT_PORT = 1883;
+const char *MQTT_CLIENT_ID = "pico2w-mtp40f";
+const char *MQTT_TOPIC_CO2 = "sensors/pico/mtp40f/co2";
+
 MTP40F mtp(&Serial1);
+WiFiClient wifiClient;
+PubSubClient mqttClient(wifiClient);
 
 int lines = 10;
 unsigned long lastWifiReport = 0;
@@ -70,6 +79,63 @@ bool ensureWifiConnected()
   return false;
 }
 
+bool ensureMqttConnected()
+{
+  if (mqttClient.connected())
+  {
+    return true;
+  }
+
+  if (!ensureWifiConnected())
+  {
+    return false;
+  }
+
+  mqttClient.setServer(MQTT_HOST, MQTT_PORT);
+
+  Serial.print("MQTT: connecting to ");
+  Serial.print(MQTT_HOST);
+  Serial.print(":");
+  Serial.println(MQTT_PORT);
+
+  if (mqttClient.connect(MQTT_CLIENT_ID))
+  {
+    Serial.println("MQTT: connected");
+    return true;
+  }
+
+  Serial.print("MQTT: connect failed, rc=");
+  Serial.println(mqttClient.state());
+  return false;
+}
+
+void publishCo2(int ppm)
+{
+  if (!mqttClient.connected())
+  {
+    if (!ensureMqttConnected())
+    {
+      Serial.println("MQTT: cannot publish, not connected");
+      return;
+    }
+  }
+
+  char payload[64];
+  snprintf(payload, sizeof(payload), "{\"co2_ppm\":%d}", ppm);
+
+  if (mqttClient.publish(MQTT_TOPIC_CO2, payload))
+  {
+    Serial.print("MQTT: published CO2 to ");
+    Serial.print(MQTT_TOPIC_CO2);
+    Serial.print(" -> ");
+    Serial.println(payload);
+  }
+  else
+  {
+    Serial.println("MQTT: publish failed");
+  }
+}
+
 
 void setup()
 {
@@ -88,6 +154,9 @@ void setup()
 
   ensureWifiConnected();
   Serial.println("WiFi init attempt completed");
+
+  ensureMqttConnected();
+  Serial.println("MQTT init attempt completed");
 
   // if (mtp.begin() == false)
   // {
@@ -110,12 +179,15 @@ void loop()
   {
     Serial.print(millis());
     Serial.print("\t");
-    Serial.print(mtp.getGasConcentration());
+    int ppm = mtp.getGasConcentration();
+    Serial.print(ppm);
     Serial.println();
     digitalWrite(LED_BUILTIN, HIGH);
     delay(50);
     digitalWrite(LED_BUILTIN, LOW);
     lines++;
+
+    publishCo2(ppm);
   }
 
   // Periodic Wi-Fi status report
@@ -128,6 +200,18 @@ void loop()
     {
       ensureWifiConnected();
     }
+    else
+    {
+      if (!mqttClient.connected())
+      {
+        ensureMqttConnected();
+      }
+    }
+  }
+
+  if (mqttClient.connected())
+  {
+    mqttClient.loop();
   }
 }
 
