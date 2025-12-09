@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <PubSubClient.h>
-#include "MTP40F.h"
 
 // Wi-Fi credentials
 const char *WIFI_SSID = "thermal_grace_iot_24";
@@ -13,16 +12,11 @@ const uint16_t MQTT_PORT = 1883;
 const char *MQTT_CLIENT_ID = "pico2w-mtp40f";
 const char *MQTT_TOPIC = "sensors/pico/mtp40f";
 
-// Sensor UART pins
-const uint8_t MTP40F_RX_PIN = 6;  // Pico GPIO 6 connects to MTP40F TX (pin 6)
-const uint8_t MTP40F_TX_PIN = 7;  // Pico GPIO 7 connects to MTP40F RX (pin 7)
-
-// Publish every 2.5s to stay within the sensor update interval
-const unsigned long PUBLISH_INTERVAL_MS = 2500;
+// Publish heartbeat every N milliseconds to prove end-to-end connectivity
+const unsigned long PUBLISH_INTERVAL_MS = 5000;
 
 WiFiClient wifiClient;
 PubSubClient mqttClient(wifiClient);
-MTP40F mtp(&Serial1);
 
 unsigned long lastPublish = 0;
 unsigned long lastHeartbeat = 0;
@@ -118,6 +112,8 @@ bool ensureMqttConnected()
   Serial.print(MQTT_HOST);
   Serial.print(":");
   Serial.println(MQTT_PORT);
+
+  // Optional: set clean session and no credentials; adapt if your broker needs auth
   if (mqttClient.connect(MQTT_CLIENT_ID))
   {
     Serial.println("MQTT: connected");
@@ -129,19 +125,14 @@ bool ensureMqttConnected()
   return false;
 }
 
-void publishReading()
+void publishHeartbeat()
 {
-  uint32_t co2 = mtp.getGasConcentration();
   unsigned long now = millis();
 
-  // Simple JSON payload without ArduinoJson
   char payload[96];
-  snprintf(payload, sizeof(payload), "{\"timestamp_ms\":%lu,\"co2_ppm\":%lu}", now, (unsigned long)co2);
+  snprintf(payload, sizeof(payload), "{\"timestamp_ms\":%lu,\"msg\":\"hello\",\"uptime_ms\":%lu}", now, now);
 
-  // Mirror what we plan to send in the serial monitor
-  Serial.print("Sensor CO2 ppm: ");
-  Serial.println((unsigned long)co2);
-  Serial.print("Publishing payload: ");
+  Serial.print("Publishing heartbeat: ");
   Serial.println(payload);
 
   if (!mqttClient.publish(MQTT_TOPIC, payload))
@@ -150,8 +141,7 @@ void publishReading()
   }
   else
   {
-    Serial.print("MQTT: published -> ");
-    Serial.println(payload);
+    Serial.println("MQTT: published heartbeat");
   }
 }
 
@@ -186,12 +176,6 @@ void setup()
   waitForSerial();
   Serial.println("\n\nBooting MTP40F MQTT client...");
 
-  Serial1.setRX(MTP40F_RX_PIN);
-  Serial1.setTX(MTP40F_TX_PIN);
-  Serial1.begin(9600);
-
-  mtp.begin();
-
   ensureWifiConnected();
   ensureMqttConnected();
 
@@ -221,7 +205,7 @@ void loop()
   unsigned long now = millis();
   if (now - lastPublish >= PUBLISH_INTERVAL_MS)
   {
-    publishReading();
+    publishHeartbeat();
     lastPublish = now;
   }
 }
