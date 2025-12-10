@@ -12,6 +12,7 @@ MQTT_CLIENT_ID = "pico-radar"
 MQTT_TOPIC = b"sensors/radar/targets"
 MQTT_KEEPALIVE = 60
 PUBLISH_INTERVAL_MS = 100
+HEARTBEAT_INTERVAL_MS = 1000
 
 rp2.country("NL")
 wlan = network.WLAN(network.STA_IF)
@@ -53,6 +54,7 @@ def main():
     radar = RD03D()
     client = None
     last_pub = 0
+    last_heartbeat = 0
     while True:
         try:
             if not wlan.isconnected():
@@ -76,7 +78,16 @@ def main():
                 if time.ticks_diff(now, last_pub) >= PUBLISH_INTERVAL_MS:
                     payload = targets_to_payload(radar.targets)
                     client.publish(MQTT_TOPIC, json.dumps(payload))
+                    print("MQTT publish targets:", payload)
                     last_pub = now
+                    last_heartbeat = now
+            else:
+                # Heartbeat every HEARTBEAT_INTERVAL_MS even if no targets
+                now = time.ticks_ms()
+                if time.ticks_diff(now, last_heartbeat) >= HEARTBEAT_INTERVAL_MS:
+                    hb = {"timestamp_ms": now, "targets": []}
+                    client.publish(MQTT_TOPIC, json.dumps(hb))
+                    last_heartbeat = now
         except (OSError, MQTTException) as exc:
             print("MQTT/Wi-Fi error:", exc)
             try:

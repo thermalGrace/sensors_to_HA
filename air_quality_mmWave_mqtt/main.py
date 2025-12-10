@@ -88,15 +88,17 @@ def main():
 			if radar.update():
 				now = time.ticks_ms()
 				if time.ticks_diff(now, last_pub) >= PUBLISH_INTERVAL_MS:
+					env = read_bme_sensor(bme)
 					payload = {
 						"timestamp_ms": now,
 						"radar": {
 							"target_count": len(radar.targets),
 							"targets": build_radar_payload(radar.targets),
 						},
-						"environment": read_bme_sensor(bme),
+						"environment": env,
 					}
 					client.publish(MQTT_TOPIC, json.dumps(payload))
+					print("MQTT publish:", payload)
 					last_pub = now
 		except (OSError, MQTTException) as exc:
 			print("MQTT/Wi-Fi error:", exc)

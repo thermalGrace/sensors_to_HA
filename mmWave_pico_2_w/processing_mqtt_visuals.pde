@@ -114,10 +114,16 @@ void drawRadarDisplay(){
 
 void displayTarget(float angleDeg, float distanceMM, float spd, color dotColor, int index){
   if(distanceMM <= 8000){
+    // Normalize angle to [-180, 180] then clamp to the radar fan [-150, 150]
+    float a = angleDeg;
+    while (a > 180) a -= 360;
+    while (a < -180) a += 360;
+    float clamped = constrain(a, -150, 150);
+
     float scaledDist = map(distanceMM, 0, 8000, 0, radarRadius);
-    float rad = radians(angleDeg - 90);
+    float rad = radians(clamped - 90);
     float x = scaledDist * cos(rad);
-    float y = scaledDist * sin(rad);
+    float y = -scaledDist * sin(rad); // invert Y so forward points render into the radar fan
     fill(dotColor);
     noStroke();
     ellipse(x, y, 14, 14);
