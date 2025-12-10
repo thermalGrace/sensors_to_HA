@@ -4,7 +4,7 @@
 - Pico 2 W (MicroPython) publishes radar targets over MQTT to a broker on your Pi/HA host (192.168.50.176:1883).
 - Payload topic: `sensors/radar/targets` (JSON with up to 3 targets).
 - Broker: systemd Mosquitto on the Pi host, configured for anonymous access on all interfaces.
-- Home Assistant: use MQTT integration pointed at the same broker; create an MQTT sensor or use Developer Tools → MQTT to listen to `sensors/radar/targets`.
+
 
 ## Broker (Mosquitto) on Pi
 Config file `/etc/mosquitto/mosquitto.conf` (anonymous, all interfaces):
@@ -64,18 +64,6 @@ Notes:
 - Connects Wi-Fi, shows MAC/scan, attempts TCP to broker, then MQTT publish to `test/pico`.
 - Useful to confirm broker reachability from the Pico before running `main.py`.
 
-## Home Assistant integration
-- HA MQTT integration should point to broker `192.168.50.176`, port `1883`, no auth (to match broker config).
-- Quick check in HA UI: Developer Tools → MQTT → Listen to `sensors/radar/targets`.
-- Example sensor YAML:
-```
-mqtt:
-  sensor:
-    - name: "Radar Targets"
-      state_topic: "sensors/radar/targets"
-      value_template: "{{ value_json | tojson }}"
-```
-- Custom card can read this entity’s state and render the radar UI.
 
 ## Testing from any LAN host
 ```
