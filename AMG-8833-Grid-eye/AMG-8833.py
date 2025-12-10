@@ -69,59 +69,8 @@ while True:
     fig.canvas.flush_events() # for real-time plot
     print("Thermistor Temperature: {0:2.2f}".format(T_thermistor)) # print thermistor temp
     
-   /*
    
    
- * Traceback (most recent call last):
-  * File "/home/zerocluster/my_venv/lib/python3.13/site-packages/numpy/_core/__init__.py", line 22, in <module>
-    from . import multiarray
-  File "/home/zerocluster/my_venv/lib/python3.13/site-packages/numpy/_core/multiarray.py", line 11, in <module>
-    from . import _multiarray_umath, overrides
-ImportError: libopenblas.so.0: cannot open shared object file: No such file or directory
+   
+ 
 
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/home/zerocluster/my_venv/lib/python3.13/site-packages/numpy/__init__.py", line 112, in <module>
-    from numpy.__config__ import show_config
-  File "/home/zerocluster/my_venv/lib/python3.13/site-packages/numpy/__config__.py", line 4, in <module>
-    from numpy._core._multiarray_umath import (
-    ...<3 lines>...
-    )
-  File "/home/zerocluster/my_venv/lib/python3.13/site-packages/numpy/_core/__init__.py", line 48, in <module>
-    raise ImportError(msg) from exc
-ImportError: 
-
-IMPORTANT: PLEASE READ THIS FOR ADVICE ON HOW TO SOLVE THIS ISSUE!
-
-Importing the numpy C-extensions failed. This error can happen for
-many reasons, often due to issues with your setup or how NumPy was
-installed.
-
-We have compiled some common reasons and troubleshooting tips at:
-
-    https://numpy.org/devdocs/user/troubleshooting-importerror.html
-
-Please note and check the following:
-
-  * The Python version is: Python3.13 from "/home/zerocluster/my_venv/bin/python"
-  * The NumPy version is: "2.3.5"
-
-and make sure that they are the versions you expect.
-Please carefully study the documentation linked above for further help.
-
-Original error was: libopenblas.so.0: cannot open shared object file: No such file or directory
-
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/home/zerocluster/sensors_to_HA/AMG-8833-Grid-eye/AMG-8833.py", line 13, in <module>
-    import numpy as np
-  File "/home/zerocluster/my_venv/lib/python3.13/site-packages/numpy/__init__.py", line 117, in <module>
-    raise ImportError(msg) from e
-ImportError: Error importing numpy: you should not try to import numpy from
-        its source directory; please exit the numpy source tree, and relaunch
-        your python interpreter from there.
-
-   */
