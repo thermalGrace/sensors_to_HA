@@ -89,18 +89,3 @@ if __name__ == "__main__":
     display = ThermalGridDisplay()
     display.run()
 
-#     [Unit]
-# Description=Thermal AMG8833 MQTT Publisher
-# After=network-online.target
-# Wants=network-online.target
-
-# [Service]
-# Type=simple
-# User=pi
-# WorkingDirectory=/home/bartosz/Documents/ThermalGrace/sensors_to_HA/AMG-8833-Grid-eye/MQTT-protocol
-# ExecStart=/usr/bin/python3 /home/bartosz/Documents/ThermalGrace/sensors_to_HA/AMG-8833-Grid-eye/MQTT-protocol/AMG-8833--MQTT.py
-# Restart=always
-# RestartSec=10
-
-# [Install]
-# WantedBy=multi-user.target
