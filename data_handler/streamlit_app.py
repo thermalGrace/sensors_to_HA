@@ -132,7 +132,7 @@ def call_github_llm(prompt: str) -> str:
         "Content-Type": "application/json",
     }
     payload = {
-        "model": "openai/gpt-5",
+        "model": "openai/gpt-4.1",
         "messages": [
             {
                 "role": "system",
@@ -432,7 +432,7 @@ def main():
                 llm_output.text_area(
                     "Response",
                     value=st.session_state["llm_answer"],
-                    height=160,
+                    height=300,
                     key=key,
                 )
 
