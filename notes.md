@@ -8,15 +8,16 @@ Wants=network-online.target
 [Service]
 Type=simple
 User=zerocluster
-WorkingDirectory=/home/zerocluster/Documents/ThermalGrace/sensors_to_HA/AMG-8833-Grid-eye/MQTT-protocol
-# Use Python from the virtualenv, and an absolute path to the script
-ExecStart=/home/zerocluster/Documents/ThermalGrace/venv/bin/python \
-  /home/zerocluster/Documents/ThermalGrace/sensors_to_HA/AMG-8833-Grid-eye/MQTT-protocol/AMG-8833--MQTT.py
+WorkingDirectory=/home/zerocluster/sensors_to_HA/AMG-8833-Grid-eye
+
+ExecStart=/home/zerocluster/my_venv/bin/python \
+  /home/zerocluster/sensors_to_HA/AMG-8833-Grid-eye/AMG-8833--MQTT.py
 Restart=always
 RestartSec=10
 
 [Install]
 WantedBy=multi-user.target
+
 
 
 
@@ -33,8 +34,8 @@ sudo journalctl -u your-service-name.service -e
 --
 Run manually
 
-sudo -u zerocluster /home/zerocluster/Documents/ThermalGrace/venv/bin/python \
-  /home/zerocluster/Documents/ThermalGrace/sensors_to_HA/AMG-8833-Grid-eye/MQTT-protocol/AMG-8833--MQTT.py
+sudo -u zerocluster /home/zerocluster/my_venv/bin/python \
+  /home/zerocluster/sensors_to_HA/AMG-8833-Grid-eye/AMG-8833--MQTT.py
 
 
 

@@ -7,7 +7,7 @@ import subprocess
 import socket
 
 # Configuration
-MQTT_BROKER = "192.168.50.62"
+MQTT_BROKER = "192.168.50.176"
 MQTT_PORT = 1883
 MQTT_USER = None
 MQTT_PASSWORD = None
