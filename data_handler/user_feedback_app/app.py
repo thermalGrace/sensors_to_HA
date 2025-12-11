@@ -4,7 +4,7 @@ Run with: streamlit run app.py
 """
 
 import csv
-from datetime import datetime
+from datetime import datetime, UTC
 from pathlib import Path
 
 import streamlit as st
@@ -27,7 +27,7 @@ def append_response(row_values):
 
 
 def generate_short_id():
-    today_key = datetime.utcnow().strftime("%Y%m%d")
+    today_key = datetime.now(UTC).strftime("%Y%m%d")
     prefix = f"{today_key}-"
     if not CSV_PATH.exists():
         return f"{prefix}01"
@@ -174,22 +174,29 @@ if submitted:
     ensure_csv_with_header(columns)
 
     uid = generate_short_id()
-    timestamp_iso = datetime.utcnow().isoformat()
-    def resolve_value(selected, custom, fallback=None):
-        candidate = custom.strip()
-        return candidate if candidate else (selected if fallback is None else fallback)
+    timestamp_iso = datetime.now(UTC).isoformat()
 
-    activity_value = resolve_value(activity, activity_other, "Other")
-    main_task_value = resolve_value(main_task, main_task_other, "Other")
-    clothing_upper_value = resolve_value(clothing_upper, clothing_upper_other, "Other")
-    clothing_lower_value = resolve_value(clothing_lower, clothing_lower_other, "Other")
-    arrival_mode_value = resolve_value(arrival_mode, arrival_mode_other, "Other")
-    pre_entry_temp_value = resolve_value(pre_entry_temp, pre_entry_temp_other, "Other")
+    def resolve_with_other(selection: str, custom_text: str, other_label: str = "Other (describe)") -> str:
+        custom = custom_text.strip()
+        if selection == other_label:
+            return custom if custom else "Other"
+        return selection
+
+    activity_value = resolve_with_other(activity, activity_other)
+    main_task_value = resolve_with_other(main_task, main_task_other)
+    clothing_upper_value = resolve_with_other(clothing_upper, clothing_upper_other)
+    clothing_lower_value = resolve_with_other(clothing_lower, clothing_lower_other)
+    arrival_mode_value = resolve_with_other(arrival_mode, arrival_mode_other)
+    pre_entry_temp_value = resolve_with_other(pre_entry_temp, pre_entry_temp_other)
     intake_filtered = [item for item in intake if item != "Other (describe)"]
-    if intake_other.strip():
-        intake_filtered.append(intake_other.strip())
+    if "Other (describe)" in intake:
+        custom_intake = intake_other.strip()
+        if custom_intake:
+            intake_filtered.append(custom_intake)
+        else:
+            intake_filtered.append("Other")
     intake_joined = "; ".join(intake_filtered)
-    current_feel_value = resolve_value(current_feel, current_feel_other, "Other")
+    current_feel_value = resolve_with_other(current_feel, current_feel_other)
 
     row = [
         uid,

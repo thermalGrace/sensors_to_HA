@@ -23,7 +23,20 @@ from pythermalcomfort.models import pmv_ppd_iso, utci
 
 # Paths
 ROOT = Path(__file__).resolve().parent.parent
-RESPONSES_CSV = ROOT / "user_feedback_app" / "responses.csv"
+DEFAULT_RESPONSES = ROOT / "user_feedback_app" / "responses.csv"
+
+
+def _resolve_responses_csv() -> Path:
+    """Return the first existing responses.csv from common locations."""
+    candidates = [
+        DEFAULT_RESPONSES,
+        Path(__file__).resolve().parent / "responses.csv",
+        Path.cwd() / "user_feedback_app" / "responses.csv",
+    ]
+    for path in candidates:
+        if path.exists():
+            return path
+    return DEFAULT_RESPONSES
 
 # MQTT settings
 MQTT_HOST = "192.168.50.176"
@@ -75,7 +88,8 @@ DEFAULT_CLO = 0.7  # fallback
 DEFAULT_MET = 1.2  # fallback
 
 
-def latest_user_context(csv_path: Path = RESPONSES_CSV) -> Optional[UserContext]:
+def latest_user_context(csv_path: Optional[Path] = None) -> Optional[UserContext]:
+    csv_path = csv_path or _resolve_responses_csv()
     if not csv_path.exists():
         return None
     with csv_path.open("r", newline="") as f:
