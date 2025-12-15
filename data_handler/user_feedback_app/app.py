@@ -40,6 +40,7 @@ def generate_short_id():
             if len(row) >= 2 and row[1].startswith(today_key):
                 daily_count += 1
 
+    # Human-friendly incrementing ID scoped per day (e.g., 20250101-03).
     return f"{prefix}{daily_count + 1:02d}"
 
 

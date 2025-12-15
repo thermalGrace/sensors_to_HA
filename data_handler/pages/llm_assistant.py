@@ -34,6 +34,7 @@ def render_llm_assistant(question: str, ask_button: bool, sensor_box, user_box, 
         else:
             user_box.info("No user CSV context available yet.")
 
+    # Fire the LLM call once per button press to avoid repeated API hits during reruns.
     if ask_button and not st.session_state.get("llm_called"):
         prompt = build_prompt_from_csv(sensor_row, user_ctx, question)
         answer = call_github_llm(prompt)

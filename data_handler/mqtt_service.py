@@ -36,6 +36,7 @@ def on_message(client, userdata, msg):
     if VERBOSE_LOG:
         print(f"MQTT {msg.topic}: {data}")
 
+    # Route messages by topic; compute comfort only when we have environment payloads.
     if msg.topic == "sensors/pico/mtp40f/co2" and isinstance(data, dict):
         update_state(
             co2_ppm=data.get("co2_ppm"),

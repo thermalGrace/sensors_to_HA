@@ -28,6 +28,7 @@ DEFAULT_RESPONSES = ROOT / "user_feedback_app" / "responses.csv"
 
 def _resolve_responses_csv() -> Path:
     """Return the first existing responses.csv from common locations."""
+    # Keep lookup flexible so the calculator works when run from repo root or module path.
     candidates = [
         DEFAULT_RESPONSES,
         Path(__file__).resolve().parent / "responses.csv",

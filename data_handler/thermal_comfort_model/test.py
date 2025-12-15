@@ -1,5 +1,7 @@
 from pythermalcomfort.models import pmv_ppd_iso, utci
 
+# Quick sanity check of the comfort model functions when run directly.
+
 # Calculate PMV and PPD using ISO 7730 standard
 result = pmv_ppd_iso(
     tdb=25,  # Dry Bulb Temperature in °C

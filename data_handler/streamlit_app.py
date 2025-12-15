@@ -9,6 +9,7 @@ import streamlit as st
 
 from mqtt_monitor import HOST, ensure_host_resolvable
 
+# Allow running via `streamlit run streamlit_app.py` without installing as a package.
 PKG_ROOT = Path(__file__).resolve().parent
 REPO_ROOT = PKG_ROOT.parent
 for entry in (PKG_ROOT, REPO_ROOT):
@@ -57,6 +58,7 @@ def main():
         llm_status = st.empty()
         llm_output = st.empty()
 
+    # Simple heartbeat loop; Streamlit reruns the script so we poll state and render.
     while True:
         snapshot = get_snapshot()
 
@@ -64,6 +66,7 @@ def main():
         last_updated = format_ts(snapshot.get("last_updated"))
         status_placeholder.write(f"Status: `{status}` · Last update: `{last_updated}`")
 
+        # Persist to CSV only when we observe a new MQTT message.
         if snapshot.get("last_updated") and st.session_state.get("last_write_ts") != snapshot.get("last_updated"):
             append_snapshot_to_csv(snapshot)
             st.session_state["last_write_ts"] = snapshot.get("last_updated")

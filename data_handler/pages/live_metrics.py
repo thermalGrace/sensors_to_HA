@@ -18,6 +18,7 @@ def render_live_metrics(snapshot: Mapping[str, Any], table_placeholder, raw_plac
         if target_count is None and isinstance(radar.get("targets"), list):
             target_count = len(radar.get("targets"))
 
+    # Flatten nested dicts into a simple table for Streamlit display.
     table_rows = [
         {"metric": "CO2 ppm", "value": co2_ppm if co2_ppm is not None else "—"},
         {"metric": "People (radar)", "value": target_count if target_count is not None else "—"},

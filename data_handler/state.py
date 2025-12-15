@@ -11,6 +11,7 @@ from typing import Any, Dict
 SENSOR_CSV = Path(__file__).resolve().parent / "live_metrics.csv"
 
 # Shared state guarded by a lock so the Streamlit thread can read safely.
+# Shared dict mirrors the most recent MQTT payloads plus derived comfort metrics.
 latest: Dict[str, Any] = {
     "co2_ppm": None,
     "radar": None,

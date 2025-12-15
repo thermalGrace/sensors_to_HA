@@ -28,6 +28,7 @@ def call_github_llm(prompt: str) -> str:
         ],
     }
 
+    # Basic GitHub Models inference call; keep timeout short for UI responsiveness.
     try:
         resp = requests.post(url, headers=headers, json=payload, timeout=60)
         resp.raise_for_status()

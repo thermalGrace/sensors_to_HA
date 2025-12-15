@@ -10,6 +10,7 @@ import paho.mqtt.client as mqtt
 HOST = "192.168.50.176"
 PORT = 1883
 
+# Topics consumed by the CLI monitor; mirrors what the Streamlit app listens to.
 TOPICS = [
     ("sensors/pico/mtp40f/co2", 0),
     ("sensors/pico/air_mmwave", 0),
