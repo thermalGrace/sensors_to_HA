@@ -13,6 +13,8 @@ Streamlit dashboard that listens to MQTT topics from Pico 2W sensors, computes t
 - `thermal_comfort_model/comfort_calc.py` — Converts environment MQTT payloads into PMV/PPD/UTCI using pythermalcomfort, pulling latest user context from CSV.
 - `thermal_comfort_model/test.py` — Tiny sanity check script for the comfort formulas.
 - `user_feedback_app/app.py` — Streamlit survey that captures user comfort context (activity, clothing, etc.) into `user_feedback_app/responses.csv` for use by the model.
+- `buienradar_data/query_current_state.py` — Buienradar fetch + parsing helpers, including a `weather_summary_from_state` helper.
+- `weather_service.py` — Background thread that refreshes Buienradar weather every 7 minutes and pushes it into shared state.
 - `live_metrics.csv` — Appended by the dashboard when new MQTT data arrives; used by the LLM assistant for historical context.
 
 ## How pieces fit together
@@ -22,9 +24,10 @@ Streamlit dashboard that listens to MQTT topics from Pico 2W sensors, computes t
 2. Incoming payloads go through `mqtt_service.on_message`, which:
    - Updates shared state in `state.py`.
    - Derives comfort metrics via `thermal_comfort_model.compute_comfort` when environment data is present.
+3. In parallel, `weather_service` polls Buienradar every 7 minutes for the configured address and stores a compact weather snapshot in shared state.
 3. The Streamlit loop reads snapshots from `state.py` and:
    - Shows them on the **Live Metrics** page (`pages/live_metrics.py`).
-   - Appends new snapshots to `live_metrics.csv` for persistence.
+   - Appends new snapshots (including weather) to `live_metrics.csv` for persistence.
 4. The **LLM Assistant** page (`pages/llm_assistant.py`) pulls the latest CSV row plus the most recent user context from `user_feedback_app/responses.csv`, builds a prompt with `llm_utils.build_prompt_from_csv`, and sends it via `llm_utils.call_github_llm`.
 5. The standalone survey (`user_feedback_app/app.py`) provides the occupant context the comfort model and LLM rely on.
 6. Optional: `mqtt_monitor.py` can be run separately to tail MQTT messages for debugging.
@@ -34,5 +37,7 @@ Streamlit dashboard that listens to MQTT topics from Pico 2W sensors, computes t
 - User survey: `cd data_handler/user_feedback_app && streamlit run app.py`
 - Comfort calculator CLI (logs comfort to stdout): `cd data_handler && python thermal_comfort_model/comfort_calc.py`
 - MQTT CLI monitor: `cd data_handler && python mqtt_monitor.py`
+
+Weather fetch depends on the `buienradar` package (`pip install buienradar`). Configure the address inside `weather_service.py` if needed.
 
 Set `HOST`/`PORT` in `mqtt_monitor.py` and `mqtt_service.py` if your broker address changes. Provide `github_models_token` in `.streamlit/secrets.toml` for the LLM assistant.

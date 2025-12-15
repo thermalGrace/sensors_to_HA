@@ -17,6 +17,8 @@ latest: Dict[str, Any] = {
     "radar": None,
     "environment": None,
     "comfort": None,
+    "weather": None,
+    "weather_error": None,
     "last_topic": None,
     "last_payload": None,
     "last_updated": None,
@@ -42,6 +44,7 @@ def snapshot_to_row(snapshot: Dict[str, Any]) -> Dict[str, Any]:
     radar = snapshot.get("radar") or {}
     env = snapshot.get("environment") or {}
     comfort = snapshot.get("comfort") or {}
+    weather = snapshot.get("weather") or {}
 
     people = None
     if isinstance(radar, dict):
@@ -63,6 +66,16 @@ def snapshot_to_row(snapshot: Dict[str, Any]) -> Dict[str, Any]:
         "pmv": comfort.get("pmv") if isinstance(comfort, dict) else None,
         "ppd": comfort.get("ppd") if isinstance(comfort, dict) else None,
         "utci": comfort.get("utci") if isinstance(comfort, dict) else None,
+        "weather_temperature_c": weather.get("temperature_c") if isinstance(weather, dict) else None,
+        "weather_feel_temperature_c": weather.get("feel_temperature_c") if isinstance(weather, dict) else None,
+        "weather_humidity_pct": weather.get("humidity_pct") if isinstance(weather, dict) else None,
+        "weather_pressure_hpa": weather.get("pressure_hpa") if isinstance(weather, dict) else None,
+        "weather_wind_speed_ms": weather.get("wind_speed_ms") if isinstance(weather, dict) else None,
+        "weather_wind_gust_ms": weather.get("wind_gust_ms") if isinstance(weather, dict) else None,
+        "weather_precip_total_mm": weather.get("precip_total_mm") if isinstance(weather, dict) else None,
+        "weather_precip_timeframe_min": weather.get("precip_timeframe_min") if isinstance(weather, dict) else None,
+        "weather_condition": weather.get("condition") if isinstance(weather, dict) else None,
+        "weather_measured_iso": weather.get("measured_iso") if isinstance(weather, dict) else None,
     }
 
 
@@ -81,6 +94,16 @@ def append_snapshot_to_csv(snapshot: Dict[str, Any]) -> None:
         "pmv",
         "ppd",
         "utci",
+        "weather_temperature_c",
+        "weather_feel_temperature_c",
+        "weather_humidity_pct",
+        "weather_pressure_hpa",
+        "weather_wind_speed_ms",
+        "weather_wind_gust_ms",
+        "weather_precip_total_mm",
+        "weather_precip_timeframe_min",
+        "weather_condition",
+        "weather_measured_iso",
     ]
     exists = SENSOR_CSV.exists()
     with SENSOR_CSV.open("a", newline="") as f:

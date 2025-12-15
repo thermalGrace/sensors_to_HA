@@ -17,6 +17,7 @@ for entry in (PKG_ROOT, REPO_ROOT):
         sys.path.append(str(entry))
 
 from mqtt_service import ensure_mqtt_thread  # noqa: E402
+from weather_service import ensure_weather_thread  # noqa: E402
 from pages.live_metrics import render_live_metrics  # noqa: E402
 from pages.llm_assistant import render_llm_assistant  # noqa: E402
 from state import append_snapshot_to_csv, format_ts, get_snapshot  # noqa: E402
@@ -34,6 +35,7 @@ def main():
         return
 
     ensure_mqtt_thread(st.session_state)
+    ensure_weather_thread(st.session_state)
 
     status_placeholder = st.empty()
     table_placeholder = raw_placeholder = None
