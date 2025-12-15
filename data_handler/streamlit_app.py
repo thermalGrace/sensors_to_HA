@@ -23,8 +23,8 @@ from state import append_snapshot_to_csv, format_ts, get_snapshot  # noqa: E402
 
 def main():
     st.set_page_config(page_title="Pico MQTT Monitor", layout="wide")
-    st.title("Pico MQTT Monitor")
-    st.caption("Live view of CO₂ and mmWave sensor data via MQTT")
+    st.title("Thermal Grace - Perceived Thermal Comfort App")
+    st.caption("Comfort-as-a-Service: Live view of CO₂ and mmWave sensor data via MQTT")
 
     page = st.sidebar.radio("Navigation", ["Live Metrics", "LLM Assistant"], index=0)
 

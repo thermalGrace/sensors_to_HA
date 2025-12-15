@@ -9,7 +9,8 @@ MQTTClient mqtt;
 
 // MQTT configuration
 String BROKER = "tcp://192.168.50.176:1883"; // set to your broker IP
-String TOPIC  = "sensors/radar/targets";
+// Updated to listen to Pico air/mmWave publisher; keep old topic commented for reference
+String TOPIC  = "sensors/pico/air_mmwave"; // was: sensors/radar/targets
 String CLIENT_ID = "processing-radar-" + (int)random(0, 10_000);
 
 float[] angle = new float[3];
@@ -64,7 +65,16 @@ void messageReceived(String topic, byte[] payload) {
   try {
     JSONObject root = parseJSONObject(msg);
     if (root == null) return;
-    JSONArray targets = root.getJSONArray("targets");
+
+    // Accept both new nested payload (root.radar.targets) and legacy (root.targets)
+    JSONObject radar = root.getJSONObject("radar");
+    JSONArray targets = null;
+    if (radar != null) {
+      targets = radar.getJSONArray("targets");
+    }
+    if (targets == null) {
+      targets = root.getJSONArray("targets");
+    }
     if (targets == null) return;
     int n = min(targets.size(), 3);
     for (int i = 0; i < n; i++) {
