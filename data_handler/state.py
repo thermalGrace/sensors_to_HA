@@ -106,9 +106,22 @@ def append_snapshot_to_csv(snapshot: Dict[str, Any]) -> None:
         "weather_measured_iso",
     ]
     exists = SENSOR_CSV.exists()
+
+    # Ensure header exists even if the file was created earlier without one.
+    if exists and SENSOR_CSV.stat().st_size > 0:
+        with SENSOR_CSV.open("r", newline="") as f:
+            first_row = next(csv.reader(f), [])
+        if first_row != headers:
+            # Rewrite file with header + existing rows preserved as-is.
+            with SENSOR_CSV.open("r", newline="") as f:
+                existing = list(csv.reader(f))
+            with SENSOR_CSV.open("w", newline="") as f:
+                writer = csv.writer(f)
+                writer.writerow(headers)
+                writer.writerows(existing)
     with SENSOR_CSV.open("a", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=headers)
-        if not exists:
+        if not exists or SENSOR_CSV.stat().st_size == 0:
             writer.writeheader()
         writer.writerow(row)
 

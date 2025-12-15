@@ -20,8 +20,7 @@ def render_live_metrics(snapshot: Mapping[str, Any], table_placeholder, raw_plac
         if target_count is None and isinstance(radar.get("targets"), list):
             target_count = len(radar.get("targets"))
 
-    # Flatten nested dicts into a simple table for Streamlit display.
-    table_rows = [
+    indoor_rows = [
         {"metric": "CO2 ppm", "value": co2_ppm if co2_ppm is not None else "—"},
         {"metric": "People (radar)", "value": target_count if target_count is not None else "—"},
         {
@@ -40,6 +39,9 @@ def render_live_metrics(snapshot: Mapping[str, Any], table_placeholder, raw_plac
             "metric": "Gas (kΩ)",
             "value": env.get("gas_kohms", "—") if isinstance(env, dict) else "—",
         },
+    ]
+
+    comfort_rows = [
         {
             "metric": "PMV",
             "value": comfort.get("pmv", "—") if isinstance(comfort, dict) else "—",
@@ -52,12 +54,15 @@ def render_live_metrics(snapshot: Mapping[str, Any], table_placeholder, raw_plac
             "metric": "UTCI (°C)",
             "value": comfort.get("utci", "—") if isinstance(comfort, dict) else "—",
         },
+    ]
+
+    weather_rows = [
         {
-            "metric": "Weather condition",
+            "metric": "Condition",
             "value": weather.get("condition", "—") if isinstance(weather, dict) else "—",
         },
         {
-            "metric": "Weather temp (°C)",
+            "metric": "Temp (°C)",
             "value": weather.get("temperature_c", "—") if isinstance(weather, dict) else "—",
         },
         {
@@ -65,11 +70,11 @@ def render_live_metrics(snapshot: Mapping[str, Any], table_placeholder, raw_plac
             "value": weather.get("feel_temperature_c", "—") if isinstance(weather, dict) else "—",
         },
         {
-            "metric": "Weather humidity (%)",
+            "metric": "Humidity (%)",
             "value": weather.get("humidity_pct", "—") if isinstance(weather, dict) else "—",
         },
         {
-            "metric": "Weather pressure (hPa)",
+            "metric": "Pressure (hPa)",
             "value": weather.get("pressure_hpa", "—") if isinstance(weather, dict) else "—",
         },
         {
@@ -89,23 +94,39 @@ def render_live_metrics(snapshot: Mapping[str, Any], table_placeholder, raw_plac
             "value": weather.get("precip_timeframe_min", "—") if isinstance(weather, dict) else "—",
         },
         {
+            "metric": "Measured at",
+            "value": weather.get("measured_iso", "—") if isinstance(weather, dict) else "—",
+        },
+        {
             "metric": "Weather status",
             "value": weather_error if weather_error else "ok" if weather else "—",
         },
     ]
 
-    # Ensure consistent string values so Streamlit/Arrow don't attempt numeric casts on mixed columns.
-    for row in table_rows:
-        val = row.get("value")
-        if val is None or val == "—":
-            row["value"] = "—"
-        elif isinstance(val, float):
-            row["value"] = f"{val:.2f}"
-        else:
-            row["value"] = str(val)
+    def _stringify(rows):
+        for row in rows:
+            val = row.get("value")
+            if val is None or val == "—":
+                row["value"] = "—"
+            elif isinstance(val, float):
+                row["value"] = f"{val:.2f}"
+            else:
+                row["value"] = str(val)
+
+    _stringify(indoor_rows)
+    _stringify(comfort_rows)
+    _stringify(weather_rows)
 
     if table_placeholder:
-        table_placeholder.table(table_rows)
+        with table_placeholder.container():
+            st.markdown("**Indoor sensors**")
+            st.table(indoor_rows)
+
+            st.markdown("**Comfort**")
+            st.table(comfort_rows)
+
+            st.markdown("**Weather (Buienradar)**")
+            st.table(weather_rows)
 
     if raw_placeholder:
         with raw_placeholder:
