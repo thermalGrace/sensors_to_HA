@@ -90,6 +90,7 @@ DEFAULT_MET = 1.2  # fallback
 
 
 def latest_user_context(csv_path: Optional[Path] = None) -> Optional[UserContext]:
+    """Load the most recent user feedback row to derive activity/clothing inputs."""
     csv_path = csv_path or _resolve_responses_csv()
     if not csv_path.exists():
         return None
@@ -107,17 +108,20 @@ def latest_user_context(csv_path: Optional[Path] = None) -> Optional[UserContext
 
 
 def estimate_met(activity: str) -> float:
+    """Map a free-form activity string to a MET value with sane fallback."""
     key = activity.strip().lower()
     return ACTIVITY_MET.get(key, DEFAULT_MET)
 
 
 def estimate_clo(upper: str, lower: str) -> float:
+    """Compute total clothing insulation from upper/lower garment labels."""
     upper_clo = UPPER_CLO_CLO.get(upper.strip().lower(), 0.25)
     lower_clo = LOWER_CLO_CLO.get(lower.strip().lower(), 0.25)
     return upper_clo + lower_clo if (upper_clo or lower_clo) else DEFAULT_CLO
 
 
 def compute_comfort(env: EnvReading, user: Optional[UserContext]) -> Dict[str, float]:
+    """Calculate PMV, PPD, MET, CLO, and UTCI for the given environment/user context."""
     met = estimate_met(user.activity if user else "")
     clo = estimate_clo(user.clothing_upper if user else "", user.clothing_lower if user else "")
 
@@ -134,6 +138,7 @@ def compute_comfort(env: EnvReading, user: Optional[UserContext]) -> Dict[str, f
 
     # pythermalcomfort may return a float or a UTCI object; normalize safely
     def _to_float(val):
+        """Normalize different numeric-like UTCI returns to a float when possible."""
         # Common cases: float, Decimal, numpy scalar
         try:
             return float(val)
@@ -164,6 +169,7 @@ def compute_comfort(env: EnvReading, user: Optional[UserContext]) -> Dict[str, f
     }
 
 def parse_env_from_payload(payload: dict) -> Optional[EnvReading]:
+    """Extract EnvReading from the MQTT JSON payload, guarding against missing fields."""
     env = payload.get("environment") if isinstance(payload, dict) else None
     if not isinstance(env, dict):
         return None
@@ -178,6 +184,7 @@ def parse_env_from_payload(payload: dict) -> Optional[EnvReading]:
 
 
 def on_connect(client, userdata, flags, rc, properties=None):
+    """Subscribe to the environment topic once the MQTT connection is established."""
     if rc == 0:
         print(f"Connected to MQTT {MQTT_HOST}:{MQTT_PORT}")
         client.subscribe(MQTT_TOPIC_ENV, qos=0)
@@ -187,6 +194,7 @@ def on_connect(client, userdata, flags, rc, properties=None):
 
 
 def on_message(client, userdata, msg):
+    """Handle incoming MQTT messages: parse payload, compute comfort, and log results."""
     try:
         data = json.loads(msg.payload.decode("utf-8"))
     except json.JSONDecodeError:
@@ -208,6 +216,7 @@ def on_message(client, userdata, msg):
 
 
 def mqtt_loop():
+    """Maintain a resilient MQTT client loop with auto-reconnect on errors."""
     client = mqtt.Client(client_id=CLIENT_ID)
     if hasattr(mqtt, "CallbackAPIVersion"):
         try:
@@ -227,6 +236,7 @@ def mqtt_loop():
 
 
 def main():
+    """Entry point: announce startup then block in the MQTT loop."""
     print("Starting comfort calculator. Listening on MQTT topic", MQTT_TOPIC_ENV)
     mqtt_loop()
 

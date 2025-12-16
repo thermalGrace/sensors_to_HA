@@ -44,6 +44,8 @@ def build_prompt_from_snapshot(snapshot: dict, user_ctx) -> str:
     radar = snapshot.get("radar") or {}
     env = snapshot.get("environment") or {}
     comfort = snapshot.get("comfort") or {}
+    weather = snapshot.get("weather") or {}
+    weather_error = snapshot.get("weather_error")
 
     co2 = snapshot.get("co2_ppm")
     people = None
@@ -64,6 +66,25 @@ def build_prompt_from_snapshot(snapshot: dict, user_ctx) -> str:
         f"- PPD: {comfort.get('ppd', 'unknown') if isinstance(comfort, dict) else 'unknown'}",
         f"- UTCI: {comfort.get('utci', 'unknown') if isinstance(comfort, dict) else 'unknown'} C",
     ]
+
+    if weather:
+        lines.append("Weather snapshot:")
+        lines.extend(
+            [
+                f"- Condition: {weather.get('condition', 'unknown')}",
+                f"- Temp: {weather.get('temperature_c', 'unknown')} C",
+                f"- Feels like: {weather.get('feel_temperature_c', 'unknown')} C",
+                f"- Humidity: {weather.get('humidity_pct', 'unknown')} %",
+                f"- Pressure: {weather.get('pressure_hpa', 'unknown')} hPa",
+                f"- Wind: {weather.get('wind_speed_ms', 'unknown')} m/s (gust {weather.get('wind_gust_ms', 'unknown')} m/s)",
+                f"- Precip: {weather.get('precip_total_mm', 'unknown')} mm over {weather.get('precip_timeframe_min', 'unknown')} min",
+                f"- Measured at: {weather.get('measured_iso', 'unknown')}",
+            ]
+        )
+    elif weather_error:
+        lines.append(f"Weather snapshot unavailable (error: {weather_error})")
+    else:
+        lines.append("Weather snapshot unavailable.")
 
     if user_ctx:
         lines.append("User context (latest CSV):")
@@ -96,6 +117,13 @@ def build_prompt_from_csv(sensor_row: dict | None, user_ctx, question: str) -> s
                 f"- PMV: {sensor_row.get('pmv', 'unknown')}",
                 f"- PPD: {sensor_row.get('ppd', 'unknown')}",
                 f"- UTCI: {sensor_row.get('utci', 'unknown')} C",
+                f"- Weather condition: {sensor_row.get('weather_condition', 'unknown')}",
+                f"- Weather temp: {sensor_row.get('weather_temperature_c', 'unknown')} C (feels {sensor_row.get('weather_feel_temperature_c', 'unknown')} C)",
+                f"- Weather humidity: {sensor_row.get('weather_humidity_pct', 'unknown')} %",
+                f"- Weather pressure: {sensor_row.get('weather_pressure_hpa', 'unknown')} hPa",
+                f"- Weather wind: {sensor_row.get('weather_wind_speed_ms', 'unknown')} m/s (gust {sensor_row.get('weather_wind_gust_ms', 'unknown')} m/s)",
+                f"- Weather precip: {sensor_row.get('weather_precip_total_mm', 'unknown')} mm over {sensor_row.get('weather_precip_timeframe_min', 'unknown')} min",
+                f"- Weather measured at: {sensor_row.get('weather_measured_iso', 'unknown')}",
             ]
         )
     else:
