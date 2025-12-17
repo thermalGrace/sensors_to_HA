@@ -1,14 +1,34 @@
 """
-Live thermal comfort calculator:
+Live thermal comfort calculator
+===============================
 
-- Subscribes to MQTT for environment payloads (expects env in sensors/pico/air_mmwave -> environment).
-- Pulls latest user feedback from user_feedback_app/responses.csv to estimate met/clo.
-- Computes PMV/PPD (ISO) and UTCI whenever new env data arrives; logs to console.
+What it does
+------------
+- Listens to MQTT `sensors/pico/air_mmwave` messages and extracts the `environment` payload.
+- Loads the latest row from `user_feedback_app/responses.csv` to estimate metabolic rate (MET) and clothing insulation (CLO).
+- Computes PMV, PPD (ISO 7730-2005) and UTCI for each incoming environment sample and prints the results.
 
-Run:
+PMV/PPD inputs and assumptions
+------------------------------
+- `tdb` (dry-bulb air temperature, C): from MQTT `temperature_c` (live).
+- `tr` (mean radiant temperature, C): assumed equal to `tdb` unless future payloads provide it (static assumption).
+- `rh` (relative humidity, %): from MQTT `humidity_pct` (live).
+- `vr` / `v` (air speed, m/s): hard-coded to 0.1 m/s to approximate still indoor air (static default).
+- `met` (metabolic rate, met units): estimated from the most recent feedback row via `estimate_met` mapping; falls back to 1.2 if not found (derived/static).
+- `clo` (clothing insulation, clo units): estimated from upper/lower garment labels via `estimate_clo`; falls back to 0.7 if not found (derived/static).
+- Model: `pythermalcomfort.models.pmv_ppd_iso` with `model="7730-2005"` (ISO PMV/PPD). Returns `pmv` (thermal sensation index) and `ppd` (percent people dissatisfied).
+
+How PMV/PPD are computed (conceptual)
+-------------------------------------
+PMV balances human heat gains and losses under steady-state conditions. The ISO model solves for skin heat loss via convection, radiation, sweat evaporation, respiration, and diffusion, then maps the heat balance to the PMV scale (-3 cold to +3 hot). PPD is derived from PMV with the ISO exponential relation $PPD = 100 - 95\,\exp\bigl(-0.03353\,PMV^4 - 0.2179\,PMV^2\bigr)$, meaning even at PMV = 0 at least 5% are dissatisfied.
+
+Run
+---
     python thermal_comfort_model/comfort_calc.py
 
-Dependencies: paho-mqtt, pythermalcomfort, matplotlib (optional for future plots).
+Dependencies
+------------
+paho-mqtt, pythermalcomfort, matplotlib (optional for future plots).
 """
 import csv
 import json
