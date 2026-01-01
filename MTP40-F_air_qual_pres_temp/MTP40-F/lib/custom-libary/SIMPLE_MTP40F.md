@@ -6,7 +6,7 @@
 The SimpleMTP40F library is a C++ interface for the MTP40F NDIR (Non-Dispersive Infrared) CO2 sensor. It focuses on reliable CO2 ppm aquisition and air quality interpretation.
 
 *   Supported Hardware: MTP40F CO2 Sensor 
-*   Communication Protocol: UART (Serial) at 9600 baud.
+*   Communication Protocol: UART (Serial) at 9600 baud (sensor default).
 *   Measurement Range: 400 ppm to 2000 ppm
 *   Update Frequency: Internal sensor refresh rate is once every 2 seconds.
 
@@ -19,7 +19,7 @@ This library is designed for the Arduino ecosystem but is portable to any system
     *   Logic Levels: Has a 3.3V output.
 *   **Software Dependencies:** 
     *   Requires `Arduino.h`.
-    *   Uses `Stream` class for dependency injection (works with `HardwareSerial` and `SoftwareSerial`).
+    *   Uses `Stream` class(works with `HardwareSerial` and `SoftwareSerial`).
 
 ## 3. The Function Prototypes
 
