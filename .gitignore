@@ -3,3 +3,19 @@ AMG-8833-Grid-eye/myenv/
 myvenv/
 venv/
 env/
+
+# Python bytecode / cache
+__pycache__/
+*.py[cod]
+*.pyd
+
+# Test / coverage
+.pytest_cache/
+.coverage
+coverage.xml
+
+# macOS
+.DS_Store
+
+# Editors
+.vscode/
