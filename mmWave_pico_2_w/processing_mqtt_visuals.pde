@@ -9,8 +9,7 @@ MQTTClient mqtt;
 
 // MQTT configuration
 String BROKER = "tcp://192.168.50.176:1883"; // set to your broker IP
-// Updated to listen to Pico air/mmWave publisher; keep old topic commented for reference
-String TOPIC  = "sensors/pico/air_mmwave"; // was: sensors/radar/targets
+String TOPIC  = "sensors/radar/targets";
 String CLIENT_ID = "processing-radar-" + (int)random(0, 10_000);
 
 float[] angle = new float[3];
@@ -65,16 +64,7 @@ void messageReceived(String topic, byte[] payload) {
   try {
     JSONObject root = parseJSONObject(msg);
     if (root == null) return;
-
-    // Accept both new nested payload (root.radar.targets) and legacy (root.targets)
-    JSONObject radar = root.getJSONObject("radar");
-    JSONArray targets = null;
-    if (radar != null) {
-      targets = radar.getJSONArray("targets");
-    }
-    if (targets == null) {
-      targets = root.getJSONArray("targets");
-    }
+    JSONArray targets = root.getJSONArray("targets");
     if (targets == null) return;
     int n = min(targets.size(), 3);
     for (int i = 0; i < n; i++) {
@@ -124,16 +114,10 @@ void drawRadarDisplay(){
 
 void displayTarget(float angleDeg, float distanceMM, float spd, color dotColor, int index){
   if(distanceMM <= 8000){
-    // Normalize angle to [-180, 180] then clamp to the radar fan [-150, 150]
-    float a = angleDeg;
-    while (a > 180) a -= 360;
-    while (a < -180) a += 360;
-    float clamped = constrain(a, -150, 150);
-
     float scaledDist = map(distanceMM, 0, 8000, 0, radarRadius);
-    float rad = radians(clamped - 90);
+    float rad = radians(angleDeg - 90);
     float x = scaledDist * cos(rad);
-    float y = -scaledDist * sin(rad); // invert Y so forward points render into the radar fan
+    float y = scaledDist * sin(rad);
     fill(dotColor);
     noStroke();
     ellipse(x, y, 14, 14);
