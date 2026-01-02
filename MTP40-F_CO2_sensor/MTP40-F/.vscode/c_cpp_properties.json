@@ -9,7 +9,7 @@
             "name": "PlatformIO",
             "includePath": [
                 "/home/bartosz/Documents/ThermalGrace/sensors_to_HA/MTP40-F_CO2_sensor/MTP40-F/src",
-                "/home/bartosz/Documents/ThermalGrace/sensors_to_HA/MTP40-F_CO2_sensor/MTP40-F/lib/custom-libary",
+                "/home/bartosz/Documents/ThermalGrace/sensors_to_HA/MTP40-F_CO2_sensor/MTP40-F/lib/custom-library",
                 "/home/bartosz/.platformio/packages/framework-arduinopico/cores/rp2040",
                 "/home/bartosz/.platformio/packages/framework-arduinopico/cores/rp2040/api/deprecated",
                 "/home/bartosz/.platformio/packages/framework-arduinopico/cores/rp2040/api/deprecated-avr-comp",
@@ -170,7 +170,7 @@
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
                     "/home/bartosz/Documents/ThermalGrace/sensors_to_HA/MTP40-F_CO2_sensor/MTP40-F/src",
-                    "/home/bartosz/Documents/ThermalGrace/sensors_to_HA/MTP40-F_CO2_sensor/MTP40-F/lib/custom-libary",
+                    "/home/bartosz/Documents/ThermalGrace/sensors_to_HA/MTP40-F_CO2_sensor/MTP40-F/lib/custom-library",
                     "/home/bartosz/.platformio/packages/framework-arduinopico/cores/rp2040",
                     "/home/bartosz/.platformio/packages/framework-arduinopico/cores/rp2040/api/deprecated",
                     "/home/bartosz/.platformio/packages/framework-arduinopico/cores/rp2040/api/deprecated-avr-comp",
