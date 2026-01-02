@@ -1,25 +1,42 @@
-This directory contains code and notes for debugging, testing and integrating various sensors for perceived thermal comfort with Streamlit DAshboard. 
+# sensors_to_HA — Pico sensor nodes → MQTT → dashboard
 
-## MQTT Monitor
+[![Raspberry Pi](https://img.shields.io/badge/Raspberry%20Pi-2%20W-C51A4A?logo=raspberrypi&logoColor=white)](https://www.raspberrypi.com/products/raspberry-pi-pico-2/)
+[![MicroPython](https://img.shields.io/badge/MicroPython-F7DF1E?logo=micropython&logoColor=000000)](https://micropython.org/)
+[![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
+[![C++](https://img.shields.io/badge/C%2B%2B-00599C?logo=cplusplus&logoColor=white)](https://isocpp.org/)
+[![PlatformIO](https://img.shields.io/badge/PlatformIO-F5822A?logo=platformio&logoColor=white)](https://platformio.org/)
+[![Arduino](https://img.shields.io/badge/Arduino-00979D?logo=arduino&logoColor=white)](https://www.arduino.cc/)
+[![MQTT](https://img.shields.io/badge/MQTT-660066?logo=eclipse-mosquitto&logoColor=white)](https://mqtt.org/)
+[![Processing](https://img.shields.io/badge/Processing-006699?logo=processingfoundation&logoColor=white)](https://processing.org/)
 
-Run `python data_handler/mqtt_monitor.py` on the Raspberry Pi to watch the incoming MQTT messages from both Pico 2 W devices:
+A compact repo of **Raspberry Pi Pico 2 W** experiments and tooling:
 
-- subscribes to `sensors/pico/mtp40f/co2` and `sensors/pico/air_mmwave`
-- prints a timestamped summary of CO₂ ppm, radar target counts, and environment data
+- 📟 Firmware in **MicroPython** and **C++ (PlatformIO/Arduino-Pico)**
+- 📡 Sensor streaming over **MQTT**
+- 🖥️ A **Python / Streamlit** dashboard that merges indoor sensors, weather, and user feedback
 
-Install the dependency if it is not already available:
+## Repo structure
 
-```bash
-pip install paho-mqtt
-```
+Each folder is self-documented; start with the README inside the directory you care about.
 
-## Streamlit dashboard
+- [data_handler/README.md](data_handler/README.md)
+  - 🖥️ Python/Streamlit application: MQTT ingestion, weather API integration, comfort calculations, and user feedback workflow.
 
-For a simple live dashboard powered by the same MQTT topics:
+- [air_quality_mmWave_mqtt/README.md](air_quality_mmWave_mqtt/README.md)
+  - 📡 MicroPython firmware (Pico 2 W) for environmental sensing + MQTT publishing.
 
-```bash
-pip install streamlit paho-mqtt
-streamlit run data_handler/streamlit_app.py
-```
+- [bme680_air_quality_pi_pico_2_w/README.md](bme680_air_quality_pi_pico_2_w/README.md)
+  - 🌡️ MicroPython BME680 driver + simple sensor bring-up test.
 
-The app reuses the broker settings from `data_handler/mqtt_monitor.py`, starts an MQTT listener in a background thread, and refreshes the displayed values every second.
+- [mmWave_pico_2_w/readme.md](mmWave_pico_2_w/readme.md)
+  - 🛰️ RD03D mmWave radar experimentation: bring-up, MQTT-based streaming, and visualization tooling.
+
+- [MTP40-F_air_qual_pres_temp/readme.md](MTP40-F_air_qual_pres_temp/readme.md)
+  - 🧰 PlatformIO/C++ firmware for MTP40-F NDIR CO₂ sensing (demo + MQTT variant).
+
+- grid_eye/
+  - 🌡️ Experiments around the AMG8833 Grid-EYE thermal sensor.
+
+- system_specs/
+  - 📐 System specification / architecture notes.

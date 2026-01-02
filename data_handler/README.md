@@ -38,6 +38,63 @@ Streamlit dashboard that listens to MQTT topics from Pico 2W sensors, pulls outd
 - Comfort calculator CLI (logs comfort to stdout): `cd data_handler && python thermal_comfort_model/comfort_calc.py`
 - MQTT CLI monitor: `cd data_handler && python mqtt_monitor.py`
 
+Tip: if you run both Streamlit apps at the same time, give one of them a different port, e.g.:
+
+- `streamlit run streamlit_app.py --server.port 8501`
+- `streamlit run user_feedback_app/app.py --server.port 8502`
+
+## Dependencies
+This folder is a regular Python app (not MicroPython). You’ll typically want:
+
+- `streamlit`
+- `paho-mqtt`
+- `requests`
+- `buienradar`
+- `pythermalcomfort`
+
+Example install:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install streamlit paho-mqtt requests buienradar pythermalcomfort
+```
+
 Weather fetch depends on the `buienradar` package (`pip install buienradar`). Configure the address and poll interval inside `weather_service.py` if needed. If `live_metrics.csv` pre-exists without headers, the app will rewrite it once to add the expected header row (including weather columns).
 
 Set `HOST`/`PORT` in `mqtt_monitor.py` and `mqtt_service.py` if your broker address changes. Provide `github_models_token` in `.streamlit/secrets.toml` for the LLM assistant.
+
+## Configuration notes
+
+### MQTT
+
+The MQTT broker host/port and topics are defined in `mqtt_monitor.py` and imported by `mqtt_service.py`.
+If your broker changes, edit:
+
+- `HOST`, `PORT` and `TOPICS` in `mqtt_monitor.py`
+
+Current topics consumed by the dashboard:
+
+- `sensors/pico/mtp40f/co2`
+- `sensors/pico/air_mmwave`
+
+### Weather (Buienradar)
+
+- Poll interval is controlled by `POLL_SECONDS` in `weather_service.py`.
+- The default address is `DEFAULT_ADDRESS` in `buienradar_data/query_current_state.py`.
+   - If you want a different location, edit `DEFAULT_ADDRESS` or pass a custom `address=` into `ensure_weather_thread(...)`.
+
+### LLM assistant (GitHub Models)
+
+The assistant uses GitHub Models via `llm_utils.call_github_llm()` and expects a token in Streamlit secrets.
+Create:
+
+- `.streamlit/secrets.toml`
+
+With:
+
+```toml
+github_models_token = "YOUR_TOKEN_HERE"
+```
+
+The model configured in code is currently `openai/gpt-4.1`.
