@@ -97,13 +97,12 @@ Checks if the setting of the single point correction is finished.
 1.  **Initialization:** Initialize Serial connection.
 2.  **Data Acquisition:** Use one of the "GetPPM" methods in your main `loop()`. The library handles the 4-byte reconstruction (bit-shifting) of the sensor output.
 3.  **Error Handling:** The library uses an **Additive Checksum (CRC)**. If the sum of the 14-byte response does not match the checksum sent by the sensor, the library rejects the data to prevent "phantom" high readings caused by electrical noise.
-4.  **Air pressure configuration:** Sensor default atmospheric pressure is set to 1013 hPa, if your hPa value in your area drastically differs form default, You can change it by using setAirPressure method with your hPa value as parameter.
 
 
 ## 6. Calibration & Maintenance
 **Functions**
 *   **AirPressure Reference:** 
-Used to calibrate the sensor's internal calculations based on current atmospheric pressure. The sensor defaults to 1013 hPa. Use setAirPressureReference(int apr) with values between 700 and 1100 hPa to match your local environment or an external barometer.
+Sensor default atmospheric pressure is set to 1013 hPa, if your hPa value in your area drastically differs form default, You can change it by using setAirPressure method with your hPa value as parameter.
 *   **Single Point Correction:**
 In case the sensor malfunctions and shows incorrect values you could manually change the referance point of the sensor. Bring sensor to a place with known ppm value and run the function with the ppm entered in as a parameter. To check if function finished utelize function "getSinglePointCorrectionReady".
 
