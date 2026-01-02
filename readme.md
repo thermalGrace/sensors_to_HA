@@ -35,8 +35,8 @@ Each folder is self-documented; start with the README inside the directory you c
 - [MTP40-F_air_qual_pres_temp/readme.md](MTP40-F_air_qual_pres_temp/readme.md)
   - 🧰 PlatformIO/C++ firmware for MTP40-F NDIR CO₂ sensing (demo + MQTT variant).
 
-- grid_eye/
-  - 🌡️ Experiments around the AMG8833 Grid-EYE thermal sensor.
+- [AMG_8833_Grid_eye](AMG_8833_Grid_eye)/
+  - 🌡️ Code for AMG8833 Grid-EYE thermal sensor.
 
 - system_specs/
   - 📐 System specification / architecture notes.
