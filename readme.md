@@ -1,6 +1,6 @@
-Thermal Grace 
+# Thermal Grace
 
-Perceived Thermal Comfort Application | Comfort-as-a-Service (CaaS)
+## Perceived Thermal Comfort Application | Comfort-as-a-Service (CaaS)
 
 Pico sensor nodes → MQTT → dashboard
 
@@ -19,6 +19,10 @@ A compact repo of **Raspberry Pi Pico 2 W** experiments and tooling:
 - 📟 Firmware in **MicroPython** and **C++ (PlatformIO/Arduino-Pico)**
 - 📡 Sensor streaming over **MQTT**
 - 🖥️ A **Python / Streamlit** dashboard that merges indoor sensors, weather, and user feedback
+
+## ⚠️ Security Notice
+
+**This codebase currently contains hardcoded MQTT credentials, IP addresses, login, and password for our lab network.** These will be removed soon. Always add your own credentials when deploying - currently safe keys handling is not implemented, consider updates for production use.
 
 ## Repo structure
 
