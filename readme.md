@@ -40,7 +40,7 @@ Each folder is self-documented; start with the README inside the directory you c
 - [mmWave_pico_2_w/readme.md](mmWave_pico_2_w/readme.md)
   - 🛰️ RD03D mmWave radar experimentation: bring-up, MQTT-based streaming, and visualization tooling.
 
-- [MTP40-F_air_qual_pres_temp/readme.md](MTP40-F_air_qual_pres_temp/readme.md)
+- [MTP40-F_CO2_sensor/readme.md](MTP40-F_CO2_sensor/readme.md)
   - 🧰 PlatformIO/C++ firmware for MTP40-F NDIR CO₂ sensing (demo + MQTT variant).
 
 - [AMG_8833_Grid_eye](AMG_8833_Grid_eye)/
