@@ -1,6 +1,6 @@
-Thermal Grace 
+#Thermal Grace 
 
-Perceived Thermal Comfort Application | Comfort-as-a-Service (CaaS)
+##Perceived Thermal Comfort Application | Comfort-as-a-Service (CaaS)
 
 Pico sensor nodes → MQTT → dashboard
 
