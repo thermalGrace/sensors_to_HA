@@ -1,7 +1,4 @@
-Thermal Grace 
-Perceived Thermal Comfort Application 
-
-Pico sensor nodes → MQTT → dashboard
+# sensors_to_HA — Pico sensor nodes → MQTT → dashboard
 
 [![Raspberry Pi](https://img.shields.io/badge/Raspberry%20Pi-2%20W-C51A4A?logo=raspberrypi&logoColor=white)](https://www.raspberrypi.com/products/raspberry-pi-pico-2/)
 [![MicroPython](https://img.shields.io/badge/MicroPython-F7DF1E?logo=micropython&logoColor=000000)](https://micropython.org/)
