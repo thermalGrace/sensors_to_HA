@@ -14,6 +14,10 @@ Pico sensor nodes → MQTT → dashboard
 [![MQTT](https://img.shields.io/badge/MQTT-660066?logo=eclipse-mosquitto&logoColor=white)](https://mqtt.org/)
 [![Processing](https://img.shields.io/badge/Processing-006699?logo=processingfoundation&logoColor=white)](https://processing.org/)
 
+Presentation: https://drive.google.com/file/d/1HQB2eRdxE1k00cNu16dpNNQweOrkac1l
+
+Demo video: https://youtu.be/vrhQb1QjbCg
+
 A compact repo of **Raspberry Pi Pico 2 W** experiments and tooling:
 
 - 📟 Firmware in **MicroPython** and **C++ (PlatformIO/Arduino-Pico)**
