@@ -44,11 +44,12 @@ def main():
     question = ""
     ask_button = False
 
+    multi_user_placeholder = None
     if page == "Live Metrics":
         table_placeholder = st.empty()
         raw_placeholder = st.expander("Last raw payload", expanded=False)
     elif page == "Adaptive Multi-User":
-        pass  # No placeholders needed, handled in its own render
+        multi_user_placeholder = st.empty()
     else:
         st.subheader("LLM comfort assistant")
         question = st.text_area(
@@ -79,7 +80,7 @@ def main():
         if page == "Live Metrics":
             render_live_metrics(snapshot, table_placeholder, raw_placeholder)
         elif page == "Adaptive Multi-User":
-            render_multi_user_comfort(snapshot)
+            render_multi_user_comfort(snapshot, multi_user_placeholder)
         else:
             render_llm_assistant(question, ask_button, sensor_box, user_box, llm_status, llm_output)
 
