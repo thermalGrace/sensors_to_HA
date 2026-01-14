@@ -34,6 +34,7 @@ import csv
 import json
 import threading
 import time
+from datetime import date, datetime
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Optional
@@ -130,11 +131,12 @@ def latest_user_context(csv_path: Optional[Path] = None) -> Optional[UserContext
 
 
 def all_users_context(csv_path: Optional[Path] = None) -> Dict[str, UserContext]:
-    """Load the most recent response for every unique uid in the CSV."""
+    """Load the most recent response for every unique uid in the CSV, filtered to today."""
     csv_path = csv_path or _resolve_responses_csv()
     if not csv_path.exists():
         return {}
     
+    today = date.today()
     users: Dict[str, UserContext] = {}
     with csv_path.open("r", newline="") as f:
         reader = csv.DictReader(f)
@@ -142,6 +144,20 @@ def all_users_context(csv_path: Optional[Path] = None) -> Dict[str, UserContext]
             uid = row.get("uid")
             if not uid:
                 continue
+            
+            # Filter for today's data
+            ts_str = row.get("timestamp_iso")
+            if ts_str:
+                try:
+                    # Strip timezone for parsing if present
+                    if "+" in ts_str:
+                        ts_str = ts_str.split("+")[0]
+                    dt = datetime.fromisoformat(ts_str)
+                    if dt.date() != today:
+                        continue
+                except ValueError:
+                    continue
+
             users[uid] = UserContext(
                 uid=uid,
                 activity=row.get("activity", ""),
@@ -212,6 +228,25 @@ def compute_comfort(env: EnvReading, user: Optional[UserContext]) -> Dict[str, f
         "clo": clo,
         "utci": utci_rounded,
     }
+
+
+def get_multi_user_results(env: EnvReading, users: Dict[str, UserContext]) -> list:
+    """Calculate comfort metrics for a collection of users."""
+    results = []
+    for uid, user in users.items():
+        comfort = compute_comfort(env, user)
+        results.append({
+            "User ID": uid,
+            "Activity": user.activity,
+            "Clothing (Upper)": user.clothing_upper,
+            "Clothing (Lower)": user.clothing_lower,
+            "PMV": comfort["pmv"],
+            "PPD (%)": comfort["ppd"],
+            "UTCI (C)": comfort["utci"],
+            "MET": comfort["met"],
+            "CLO": comfort["clo"],
+        })
+    return results
 
 def parse_env_from_payload(payload: dict) -> Optional[EnvReading]:
     """Extract EnvReading from the MQTT JSON payload, guarding against missing fields."""

@@ -32,23 +32,17 @@ def render_multi_user_comfort(snapshot: dict, placeholder: st.empty | None = Non
             return
 
         # 3. Calculate comfort for each user
-        results = []
-        for uid, user in users.items():
-            comfort = compute_comfort(env_reading, user)
-            results.append({
-                "User ID": uid[:8],  # Show short UID
-                "Activity": user.activity,
-                "Clothing (Upper)": user.clothing_upper,
-                "Clothing (Lower)": user.clothing_lower,
-                "PMV": comfort["pmv"],
-                "PPD (%)": comfort["ppd"],
-                "UTCI (C)": comfort["utci"],
-                "MET": comfort["met"],
-                "CLO": comfort["clo"],
-            })
+        results = get_multi_user_results(env_reading, users)
+        
+        # Display ID as short UID in table
+        display_results = []
+        for r in results:
+            dr = r.copy()
+            dr["User ID"] = dr["User ID"][:8]
+            display_results.append(dr)
 
         # 4. Display as a table
-        df = pd.DataFrame(results)
+        df = pd.DataFrame(display_results)
         st.dataframe(df, use_container_width=True)
 
         # 5. Summary statistics

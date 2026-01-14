@@ -99,44 +99,43 @@ def build_prompt_from_snapshot(snapshot: dict, user_ctx) -> str:
     return "\n".join(lines)
 
 
-def build_prompt_from_csv(sensor_row: dict | None, user_ctx, question: str) -> str:
+def build_multi_user_prompt(sensor_row: dict | None, users_results: list, question: str) -> str:
     lines = []
     if question:
         lines.append(f"User question: {question}")
-    lines.append("Sensor snapshot (from stored CSV):")
+    
+    lines.append("Environment Context:")
     if sensor_row:
-        lines.extend(
-            [
-                f"- Timestamp: {sensor_row.get('timestamp', 'unknown')}",
-                f"- Temperature: {sensor_row.get('temperature_c', 'unknown')} C",
-                f"- Humidity: {sensor_row.get('humidity_pct', 'unknown')} %",
-                f"- Pressure: {sensor_row.get('pressure_hpa', 'unknown')} hPa",
-                f"- Gas: {sensor_row.get('gas_kohms', 'unknown')} kOhms",
-                f"- CO2: {sensor_row.get('co2_ppm', 'unknown')} ppm",
-                f"- People (radar): {sensor_row.get('people', 'unknown')}",
-                f"- PMV: {sensor_row.get('pmv', 'unknown')}",
-                f"- PPD: {sensor_row.get('ppd', 'unknown')}",
-                f"- UTCI: {sensor_row.get('utci', 'unknown')} C",
-                f"- Weather condition: {sensor_row.get('weather_condition', 'unknown')}",
-                f"- Weather temp: {sensor_row.get('weather_temperature_c', 'unknown')} C (feels {sensor_row.get('weather_feel_temperature_c', 'unknown')} C)",
-                f"- Weather humidity: {sensor_row.get('weather_humidity_pct', 'unknown')} %",
-                f"- Weather pressure: {sensor_row.get('weather_pressure_hpa', 'unknown')} hPa",
-                f"- Weather wind: {sensor_row.get('weather_wind_speed_ms', 'unknown')} m/s (gust {sensor_row.get('weather_wind_gust_ms', 'unknown')} m/s)",
-                f"- Weather precip: {sensor_row.get('weather_precip_total_mm', 'unknown')} mm over {sensor_row.get('weather_precip_timeframe_min', 'unknown')} min",
-                f"- Weather measured at: {sensor_row.get('weather_measured_iso', 'unknown')}",
-            ]
-        )
+        lines.extend([
+            f"- Indoor Temp: {sensor_row.get('temperature_c', 'unknown')} C",
+            f"- Indoor Humidity: {sensor_row.get('humidity_pct', 'unknown')} %",
+            f"- CO2: {sensor_row.get('co2_ppm', 'unknown')} ppm",
+            f"- People (radar): {sensor_row.get('people', 'unknown')}",
+            f"- Weather: {sensor_row.get('weather_condition', 'unknown')}, {sensor_row.get('weather_temperature_c', 'unknown')} C (feels {sensor_row.get('weather_feel_temperature_c', 'unknown')} C)",
+        ])
     else:
-        lines.append("- No sensor CSV data available yet.")
+        lines.append("- No snapshot data available.")
 
-    if user_ctx:
-        lines.append("User context (latest CSV):")
-        lines.append(f"- Activity: {user_ctx.activity}")
-        lines.append(f"- Task: {user_ctx.main_task}")
-        lines.append(f"- Clothing upper: {user_ctx.clothing_upper}")
-        lines.append(f"- Clothing lower: {user_ctx.clothing_lower}")
+    lines.append("\nIndividual Occupant Data:")
+    if not users_results:
+        lines.append("- No occupant feedback available.")
     else:
-        lines.append("No user CSV context available.")
+        for r in users_results:
+            lines.append(f"- User {r['User ID']}:")
+            lines.append(f"  * Activity: {r['Activity']}")
+            lines.append(f"  * Clothing: {r['Clothing (Upper)']} / {r['Clothing (Lower)']}")
+            lines.append(f"  * Current Comfort: PMV={r['PMV']}, PPD={r['PPD (%)']}%, UTCI={r['UTCI (C)']} C")
 
-    lines.append("\nProvide a short interpretation of thermal comfort and actionable adjustments.")
+        # Averages
+        avg_pmv = sum(r["PMV"] for r in users_results) / len(users_results)
+        avg_ppd = sum(r["PPD (%)"] for r in users_results) / len(users_results)
+        lines.append(f"\nGroup Averages:")
+        lines.append(f"- Average PMV: {round(avg_pmv, 2)}")
+        lines.append(f"- Average PPD: {round(avg_ppd, 1)}%")
+
+    lines.append("\nTask:")
+    lines.append("1. Provide precise, personalized recommendations for each user to improve their comfort (e.g., changing layers, moving location, adjusting personal fans).")
+    lines.append("2. Provide a final summary for general HVAC/building-level adjustments (temperature, ventilation) that best balances the needs of all occupants.")
+    lines.append("Be concise but specific.")
+    
     return "\n".join(lines)
