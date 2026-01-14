@@ -6,7 +6,7 @@ import streamlit as st
 
 from thermal_comfort_model.comfort_calc import (
     all_users_context,
-    compute_comfort,
+    get_multi_user_results,
     parse_env_from_payload,
 )
 
