@@ -27,7 +27,7 @@ def render_llm_assistant(question: str, ask_button: bool, sensor_box, user_box, 
 
     if user_box:
         if users:
-            # Show a summary list of users found today
+            # Show a summary list of users found in the system
             display_users = []
             for uid, ctx in users.items():
                 display_users.append({
@@ -37,7 +37,7 @@ def render_llm_assistant(question: str, ask_button: bool, sensor_box, user_box, 
                 })
             user_box.table(display_users)
         else:
-            user_box.info("No user feedback submitted today. Submit feedback in the survey app to see personalized results.")
+            user_box.info("No user feedback found. Submit feedback in the survey app to see personalized results.")
 
     # Fire the LLM call once per button press to avoid repeated API hits during reruns.
     if ask_button and not st.session_state.get("llm_called"):

@@ -131,12 +131,11 @@ def latest_user_context(csv_path: Optional[Path] = None) -> Optional[UserContext
 
 
 def all_users_context(csv_path: Optional[Path] = None) -> Dict[str, UserContext]:
-    """Load the most recent response for every unique uid in the CSV, filtered to today."""
+    """Load the most recent response for every unique uid in the CSV."""
     csv_path = csv_path or _resolve_responses_csv()
     if not csv_path.exists():
         return {}
     
-    today = date.today()
     users: Dict[str, UserContext] = {}
     with csv_path.open("r", newline="") as f:
         reader = csv.DictReader(f)
@@ -145,19 +144,6 @@ def all_users_context(csv_path: Optional[Path] = None) -> Dict[str, UserContext]
             if not uid:
                 continue
             
-            # Filter for today's data
-            ts_str = row.get("timestamp_iso")
-            if ts_str:
-                try:
-                    # Strip timezone for parsing if present
-                    if "+" in ts_str:
-                        ts_str = ts_str.split("+")[0]
-                    dt = datetime.fromisoformat(ts_str)
-                    if dt.date() != today:
-                        continue
-                except ValueError:
-                    continue
-
             users[uid] = UserContext(
                 uid=uid,
                 activity=row.get("activity", ""),
