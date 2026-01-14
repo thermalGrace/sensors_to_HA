@@ -7,10 +7,11 @@ Streamlit dashboard that listens to MQTT topics from Pico 2W sensors, pulls outd
 - `mqtt_service.py` — MQTT consumer used by the dashboard; decodes payloads, computes comfort metrics, and updates shared state.
 - `mqtt_monitor.py` — CLI-only monitor for the same topics, useful for quick debugging without the UI.
 - `state.py` — Thread-safe shared state plus CSV helpers (`append_snapshot_to_csv`, `latest_sensor_row`, formatting utilities).
-- `llm_utils.py` — Builds prompts from sensor/user context and calls the GitHub Models chat completions endpoint.
+- `llm_utils.py` — Builds prompts from sensor/user context (including multi-user data) and calls the GitHub Models chat completions endpoint.
 - `pages/live_metrics.py` — Renders the live metrics table and last raw payload view for the dashboard.
-- `pages/llm_assistant.py` — Renders the LLM assistant page, wiring the question box, context tables, and one-shot LLM call.
-- `thermal_comfort_model/comfort_calc.py` — Converts environment MQTT payloads into PMV/PPD/UTCI using pythermalcomfort, pulling latest user context from CSV.
+- `pages/multi_user_comfort.py` — Renders the Adaptive Multi-User page, showing per-occupant comfort and group averages.
+- `pages/llm_assistant.py` — Renders the LLM assistant page, wiring the multi-user context and one-shot LLM call.
+- `thermal_comfort_model/comfort_calc.py` — Converts environment MQTT payloads into PMV/PPD/UTCI. Includes logic for multi-user aggregation and result grouping.
 - `thermal_comfort_model/test.py` — Tiny sanity check script for the comfort formulas.
 - `user_feedback_app/app.py` — Streamlit survey that captures user comfort context (activity, clothing, etc.) into `user_feedback_app/responses.csv` for use by the model.
 - `buienradar_data/query_current_state.py` — Buienradar fetch + parsing helpers, including a `weather_summary_from_state` helper.
@@ -27,9 +28,11 @@ Streamlit dashboard that listens to MQTT topics from Pico 2W sensors, pulls outd
 3. In parallel, `weather_service` polls Buienradar every 7 minutes for the configured address and stores a compact weather snapshot in shared state.
 3. The Streamlit loop reads snapshots from `state.py` and:
    - Shows them on the **Live Metrics** page (`pages/live_metrics.py`), grouped into Indoor, Comfort, and Weather sections.
+   - Shows occupant-specific metrics and group averages on the **Adaptive Multi-User** page (`pages/multi_user_comfort.py`).
    - Appends new snapshots (including weather fields) to `live_metrics.csv` for persistence.
-4. The **LLM Assistant** page (`pages/llm_assistant.py`) pulls the latest CSV row plus the most recent user context from `user_feedback_app/responses.csv`, builds a prompt with `llm_utils.build_prompt_from_csv`, and sends it via `llm_utils.call_github_llm`.
-5. The standalone survey (`user_feedback_app/app.py`) provides the occupant context the comfort model and LLM rely on.
+4. The **LLM Assistant** page (`pages/llm_assistant.py`) pulls the latest sensor data plus the collection of user feedback, builds a comprehensive multi-user prompt with `llm_utils.build_multi_user_prompt`, and sends it via `llm_utils.call_github_llm`.
+5. The LLM provides **personalized recommendations** for each occupant and a **general summary** for building-level HVAC adjustments.
+6. The standalone survey (`user_feedback_app/app.py`) provides the occupant context the comfort model and LLM rely on.
 6. Optional: `mqtt_monitor.py` can be run separately to tail MQTT messages for debugging.
 
 ## Running

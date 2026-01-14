@@ -23,6 +23,8 @@ A compact repo of **Raspberry Pi Pico 2 W** experiments and tooling:
 - 📟 Firmware in **MicroPython** and **C++ (PlatformIO/Arduino-Pico)**
 - 📡 Sensor streaming over **MQTT**
 - 🖥️ A **Python / Streamlit** dashboard that merges indoor sensors, weather, and user feedback
+- 👥 **Adaptive Multi-User Tracking**: Calculates personalized comfort (PMV/PPD/UTCI) for all occupants and computes group-level aggregate metrics.
+- 🤖 **LLM Recommendations**: Provides targeted, personalized comfort advice per user and general HVAC summaries.
 
 ## ⚠️ Security Notice
 
