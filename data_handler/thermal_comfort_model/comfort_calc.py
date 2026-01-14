@@ -76,6 +76,7 @@ class EnvReading:
 
 @dataclass
 class UserContext:
+    uid: str
     activity: str
     main_task: str
     clothing_upper: str
@@ -120,11 +121,35 @@ def latest_user_context(csv_path: Optional[Path] = None) -> Optional[UserContext
         return None
     row = reader[-1]
     return UserContext(
+        uid=row.get("uid", "unknown"),
         activity=row.get("activity", ""),
         main_task=row.get("main_task", ""),
         clothing_upper=row.get("clothing_upper", ""),
         clothing_lower=row.get("clothing_lower", ""),
     )
+
+
+def all_users_context(csv_path: Optional[Path] = None) -> Dict[str, UserContext]:
+    """Load the most recent response for every unique uid in the CSV."""
+    csv_path = csv_path or _resolve_responses_csv()
+    if not csv_path.exists():
+        return {}
+    
+    users: Dict[str, UserContext] = {}
+    with csv_path.open("r", newline="") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            uid = row.get("uid")
+            if not uid:
+                continue
+            users[uid] = UserContext(
+                uid=uid,
+                activity=row.get("activity", ""),
+                main_task=row.get("main_task", ""),
+                clothing_upper=row.get("clothing_upper", ""),
+                clothing_lower=row.get("clothing_lower", ""),
+            )
+    return users
 
 
 def estimate_met(activity: str) -> float:

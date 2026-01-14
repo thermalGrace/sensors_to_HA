@@ -20,6 +20,7 @@ from mqtt_service import ensure_mqtt_thread  # noqa: E402
 from weather_service import ensure_weather_thread  # noqa: E402
 from pages.live_metrics import render_live_metrics  # noqa: E402
 from pages.llm_assistant import render_llm_assistant  # noqa: E402
+from pages.multi_user_comfort import render_multi_user_comfort  # noqa: E402
 from state import append_snapshot_to_csv, format_ts, get_snapshot  # noqa: E402
 
 
@@ -28,7 +29,7 @@ def main():
     st.title("Thermal Grace - Perceived Thermal Comfort App")
     st.caption("Comfort-as-a-Service: Live view of CO₂ and mmWave sensor data via MQTT")
 
-    page = st.sidebar.radio("Navigation", ["Live Metrics", "LLM Assistant"], index=0)
+    page = st.sidebar.radio("Navigation", ["Live Metrics", "Adaptive Multi-User", "LLM Assistant"], index=0)
 
     if not ensure_host_resolvable(HOST):
         st.error(f"Cannot resolve MQTT host {HOST}")
@@ -46,6 +47,8 @@ def main():
     if page == "Live Metrics":
         table_placeholder = st.empty()
         raw_placeholder = st.expander("Last raw payload", expanded=False)
+    elif page == "Adaptive Multi-User":
+        pass  # No placeholders needed, handled in its own render
     else:
         st.subheader("LLM comfort assistant")
         question = st.text_area(
@@ -75,6 +78,8 @@ def main():
 
         if page == "Live Metrics":
             render_live_metrics(snapshot, table_placeholder, raw_placeholder)
+        elif page == "Adaptive Multi-User":
+            render_multi_user_comfort(snapshot)
         else:
             render_llm_assistant(question, ask_button, sensor_box, user_box, llm_status, llm_output)
 
