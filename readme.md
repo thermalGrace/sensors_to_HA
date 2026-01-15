@@ -16,7 +16,9 @@ Pico sensor nodes → MQTT → dashboard
 
 Presentation: https://drive.google.com/file/d/1HQB2eRdxE1k00cNu16dpNNQweOrkac1l
 
-Demo video: https://youtu.be/vrhQb1QjbCg
+Demo video: https://youtu.be/vrhQb1QjbCg (sensor values streaming, monitorng dashboard, PMV/PPD calcualtion, LLM assistant, mmWave radar 2D visualization, GRID-EYE heatmap over MQTT)
+
+Updated functionalidy demo video: https://youtu.be/Dp8xyD23VpI (multi-user adaptive comfort, LLM assistant, weather integration, occupancy tracking)
 
 A compact repo of **Raspberry Pi Pico 2 W** experiments and tooling:
 
