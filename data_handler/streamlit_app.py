@@ -18,9 +18,9 @@ for entry in (PKG_ROOT, REPO_ROOT):
 
 from mqtt_service import ensure_mqtt_thread  # noqa: E402
 from weather_service import ensure_weather_thread  # noqa: E402
-from pages.live_metrics import render_live_metrics  # noqa: E402
-from pages.llm_assistant import render_llm_assistant  # noqa: E402
-from pages.multi_user_comfort import render_multi_user_comfort  # noqa: E402
+from uicomponents.live_metrics import render_live_metrics  # noqa: E402
+from uicomponents.llm_assistant import render_llm_assistant  # noqa: E402
+from uicomponents.multi_user_comfort import render_multi_user_comfort  # noqa: E402
 from state import append_snapshot_to_csv, format_ts, get_snapshot  # noqa: E402
 
 

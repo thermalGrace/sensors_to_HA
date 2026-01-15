@@ -8,9 +8,9 @@ Streamlit dashboard that listens to MQTT topics from Pico 2W sensors, pulls outd
 - `mqtt_monitor.py` — CLI-only monitor for the same topics, useful for quick debugging without the UI.
 - `state.py` — Thread-safe shared state plus CSV helpers (`append_snapshot_to_csv`, `latest_sensor_row`, formatting utilities).
 - `llm_utils.py` — Builds prompts from sensor/user context (including multi-user data) and calls the GitHub Models chat completions endpoint.
-- `pages/live_metrics.py` — Renders the live metrics table and last raw payload view for the dashboard.
-- `pages/multi_user_comfort.py` — Renders the Adaptive Multi-User page, showing per-occupant comfort and group averages.
-- `pages/llm_assistant.py` — Renders the LLM assistant page, wiring the multi-user context and one-shot LLM call.
+- `uicomponents/live_metrics.py` — Renders the live metrics table and last raw payload view for the dashboard.
+- `uicomponents/multi_user_comfort.py` — Renders the Adaptive Multi-User page, showing per-occupant comfort and group averages.
+- `uicomponents/llm_assistant.py` — Renders the LLM assistant page, wiring the multi-user context and one-shot LLM call.
 - `thermal_comfort_model/comfort_calc.py` — Converts environment MQTT payloads into PMV/PPD/UTCI. Includes logic for multi-user aggregation and result grouping.
 - `thermal_comfort_model/test.py` — Tiny sanity check script for the comfort formulas.
 - `user_feedback_app/app.py` — Streamlit survey that captures user comfort context (activity, clothing, etc.) into `user_feedback_app/responses.csv` for use by the model.
