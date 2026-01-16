@@ -18,13 +18,14 @@ C4Context
     System_Ext(buienradar, "Buienradar API", "Provides external weather conditions")
     System_Ext(github_llm, "GitHub Models API", "Provides LLM inference for personalized advice")
 
-    Rel(occupant, thermal_grace, "Provides feedback & Views dashboard")
-    Rel_Right(researcher, thermal_grace, "Monitors metrics")
+    Rel_D(occupant, thermal_grace, "Provides feedback & Views dashboard")
+    Rel_U(researcher, thermal_grace, "Monitors metrics")
     
     Rel_Right(sensor_nodes, thermal_grace, "Publishes sensor data", "MQTT")
-    Rel(thermal_grace, buienradar, "Polls weather data", "HTTPS")
-    Rel(thermal_grace, github_llm, "Sends prompts / Receives advice", "HTTPS")
+    Rel_Left(buienradar, thermal_grace, "Polls weather data", "HTTPS")
+    Rel_Left(github_llm, thermal_grace, "Sends prompts / Receives advice", "HTTPS")
 
+    Lay_R(buienradar, github_llm)
     UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
 
@@ -48,15 +49,17 @@ C4Container
         ContainerDb(filesystem, "File Storage", "CSV Files", "Persists sensor logs (live_metrics.csv) and user feedback (responses.csv).")
     }
 
-    Rel(occupant, feedback_app, "Submits comfort details")
-    Rel(occupant, dashboard, "Views personalized insights")
+    Rel_D(occupant, feedback_app, "Submits comfort details")
+    Rel_D(occupant, dashboard, "Views personalized insights")
 
-    Rel(feedback_app, filesystem, "Writes user context", "CSV")
-    Rel(dashboard, filesystem, "Reads user context / Writes sensor history", "CSV")
+    Rel_L(feedback_app, filesystem, "Writes user context", "CSV")
+    Rel_R(dashboard, filesystem, "Reads user context / Writes sensor history", "CSV")
 
-    Rel_Right(sensor_nodes, dashboard, "Streams telemetry", "MQTT")
-    Rel_Left(dashboard, buienradar, "Fetches weather", "HTTPS")
-    Rel_Right(dashboard, github_llm, "Generates recommendations", "HTTPS")
+    Rel_R(sensor_nodes, dashboard, "Streams telemetry", "MQTT")
+    Rel_L(buienradar, dashboard, "Weather data", "HTTPS")
+    Rel_R(github_llm, dashboard, "AI advice", "HTTPS")
+
+    Lay_D(filesystem, sensor_nodes)
 ```
 
 ## Level 3: Component Diagram (Dashboard)
@@ -85,26 +88,30 @@ C4Component
         Component(ui_pages, "UI Components", "uicomponents/*.py", "Renderers for specific views: Live Metrics, Multi-User, LLM Assistant.")
     }
 
-    Rel(app_entry, mqtt_service, "Starts thread")
-    Rel(app_entry, weather_service, "Starts thread")
-    Rel(app_entry, state_manager, "Reads latest snapshot")
-    Rel(app_entry, ui_pages, "Renders")
+    Rel_D(app_entry, mqtt_service, "Starts thread")
+    Rel_D(app_entry, weather_service, "Starts thread")
+    Rel_L(app_entry, state_manager, "Reads latest snapshot")
+    Rel_R(app_entry, ui_pages, "Renders UI")
 
-    Rel(mqtt_service, state_manager, "Updates shared state")
-    Rel_Left(mqtt_service, mqtt_broker, "Subscribes to sensors")
-    Rel_Right(mqtt_service, comfort_calc, "Calculates metrics for new data")
+    Rel_D(mqtt_service, state_manager, "Updates shared state")
+    Rel_L(mqtt_service, mqtt_broker, "Subscribes to sensors")
+    Rel_R(mqtt_service, comfort_calc, "Calculates metrics for new data")
 
-    Rel(weather_service, state_manager, "Updates weather state")
-    Rel_Right(weather_service, buienradar, "Polls JSON")
+    Rel_D(weather_service, state_manager, "Updates weather state")
+    Rel_L(weather_service, buienradar, "Polls JSON")
 
-    Rel_Right(state_manager, metrics_csv, "Appends row")
+    Rel_D(state_manager, metrics_csv, "Appends row")
 
-    Rel(ui_pages, state_manager, "Gets snapshot data")
-    Rel(ui_pages, comfort_calc, "Calculates view-specific metrics")
-    Rel(ui_pages, llm_utils, "Invokes AI assistant")
+    Rel_D(ui_pages, state_manager, "Gets snapshot data")
+    Rel_R(ui_pages, comfort_calc, "Calculates view-specific metrics")
+    Rel_D(ui_pages, llm_utils, "Invokes AI assistant")
 
-    Rel_Left(comfort_calc, feedback_csv, "Reads user context")
-    Rel_Right(llm_utils, github_llm, "POST prompt")
+    Rel_U(comfort_calc, feedback_csv, "Reads user context")
+    Rel_R(llm_utils, github_llm, "POST prompt")
+
+    Lay_R(mqtt_broker, app_entry)
+    Lay_R(app_entry, buienradar)
+    Lay_D(metrics_csv, llm_utils)
     
-    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+    UpdateLayoutConfig($c4ShapeInRow="4", $c4BoundaryInRow="1")
 ```
