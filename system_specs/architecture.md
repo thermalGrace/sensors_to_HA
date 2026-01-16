@@ -22,10 +22,8 @@ C4Context
     Rel(researcher, thermal_grace, "Monitors metrics")
     
     Rel(sensor_nodes, thermal_grace, "Publishes sensor data", "MQTT")
-    Rel(buienradar, thermal_grace, "Polls weather data", "HTTPS")
-    Rel(github_llm, thermal_grace, "Sends prompts / Receives advice", "HTTPS")
-
-    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+    Rel(thermal_grace, buienradar, "Polls weather data", "HTTPS")
+    Rel(thermal_grace, github_llm, "Sends prompts / Receives advice", "HTTPS")
 ```
 
 ## Level 2: Container Diagram
@@ -54,9 +52,9 @@ C4Container
     Rel(feedback_app, filesystem, "Writes user context", "CSV")
     Rel(dashboard, filesystem, "Reads user context / Writes sensor history", "CSV")
 
-    Rel_Neighbor(sensor_nodes, dashboard, "Streams telemetry", "MQTT")
-    Rel_Neighbor(buienradar, dashboard, "Weather data", "HTTPS")
-    Rel_Neighbor(github_llm, dashboard, "AI advice", "HTTPS")
+    Rel(sensor_nodes, dashboard, "Streams telemetry", "MQTT")
+    Rel(dashboard, buienradar, "Fetches weather", "HTTPS")
+    Rel(dashboard, github_llm, "Generates recommendations", "HTTPS")
 ```
 
 ## Level 3: Component Diagram (Dashboard)
@@ -88,14 +86,14 @@ C4Component
     Rel(app_entry, mqtt_service, "Starts thread")
     Rel(app_entry, weather_service, "Starts thread")
     Rel(app_entry, state_manager, "Reads latest snapshot")
-    Rel(app_entry, ui_pages, "Renders UI")
+    Rel(app_entry, ui_pages, "Renders")
 
-    Rel(mqtt_service, state_manager, "Updates shared state")
     Rel(mqtt_service, mqtt_broker, "Subscribes to sensors")
     Rel(mqtt_service, comfort_calc, "Calculates metrics for new data")
+    Rel(mqtt_service, state_manager, "Updates shared state")
 
-    Rel(weather_service, state_manager, "Updates weather state")
     Rel(weather_service, buienradar, "Polls JSON")
+    Rel(weather_service, state_manager, "Updates weather state")
 
     Rel(state_manager, metrics_csv, "Appends row")
 
@@ -105,6 +103,4 @@ C4Component
 
     Rel(comfort_calc, feedback_csv, "Reads user context")
     Rel(llm_utils, github_llm, "POST prompt")
-    
-    UpdateLayoutConfig($c4ShapeInRow="4", $c4BoundaryInRow="1")
 ```
