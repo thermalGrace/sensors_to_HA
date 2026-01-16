@@ -19,11 +19,13 @@ C4Context
     System_Ext(github_llm, "GitHub Models API", "Provides LLM inference for personalized advice")
 
     Rel(occupant, thermal_grace, "Provides feedback & Views dashboard")
-    Rel(researcher, thermal_grace, "Monitors metrics")
+    Rel_Right(researcher, thermal_grace, "Monitors metrics")
     
-    Rel(sensor_nodes, thermal_grace, "Publishes sensor data", "MQTT")
+    Rel_Right(sensor_nodes, thermal_grace, "Publishes sensor data", "MQTT")
     Rel(thermal_grace, buienradar, "Polls weather data", "HTTPS")
     Rel(thermal_grace, github_llm, "Sends prompts / Receives advice", "HTTPS")
+
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
 
 ## Level 2: Container Diagram
@@ -52,9 +54,9 @@ C4Container
     Rel(feedback_app, filesystem, "Writes user context", "CSV")
     Rel(dashboard, filesystem, "Reads user context / Writes sensor history", "CSV")
 
-    Rel(sensor_nodes, dashboard, "Streams telemetry", "MQTT")
-    Rel(dashboard, buienradar, "Fetches weather", "HTTPS")
-    Rel(dashboard, github_llm, "Generates recommendations", "HTTPS")
+    Rel_Right(sensor_nodes, dashboard, "Streams telemetry", "MQTT")
+    Rel_Left(dashboard, buienradar, "Fetches weather", "HTTPS")
+    Rel_Right(dashboard, github_llm, "Generates recommendations", "HTTPS")
 ```
 
 ## Level 3: Component Diagram (Dashboard)
@@ -88,19 +90,21 @@ C4Component
     Rel(app_entry, state_manager, "Reads latest snapshot")
     Rel(app_entry, ui_pages, "Renders")
 
-    Rel(mqtt_service, mqtt_broker, "Subscribes to sensors")
-    Rel(mqtt_service, comfort_calc, "Calculates metrics for new data")
     Rel(mqtt_service, state_manager, "Updates shared state")
+    Rel_Left(mqtt_service, mqtt_broker, "Subscribes to sensors")
+    Rel_Right(mqtt_service, comfort_calc, "Calculates metrics for new data")
 
-    Rel(weather_service, buienradar, "Polls JSON")
     Rel(weather_service, state_manager, "Updates weather state")
+    Rel_Right(weather_service, buienradar, "Polls JSON")
 
-    Rel(state_manager, metrics_csv, "Appends row")
+    Rel_Right(state_manager, metrics_csv, "Appends row")
 
     Rel(ui_pages, state_manager, "Gets snapshot data")
     Rel(ui_pages, comfort_calc, "Calculates view-specific metrics")
     Rel(ui_pages, llm_utils, "Invokes AI assistant")
 
-    Rel(comfort_calc, feedback_csv, "Reads user context")
-    Rel(llm_utils, github_llm, "POST prompt")
+    Rel_Left(comfort_calc, feedback_csv, "Reads user context")
+    Rel_Right(llm_utils, github_llm, "POST prompt")
+    
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
