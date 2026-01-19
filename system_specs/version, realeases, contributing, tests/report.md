@@ -1,36 +1,168 @@
-# KPI Implementation Report: sensors_to_HA
+# Thermal Grace — Version, Releases, Contributing & Tests
 
-This report details the work done to achieve the Key Performance Indicators (KPIs) relevant to project management and control.
+> **Manage&Control KPIs Implementation**
 
-## KPI: Manage&Control-H3.1
-**Requirement:** "Set up and make use of: - version management - release management, - teamwork support, - automated testing for hard- and software systems."
-
-### Implementation Details:
-- **Version Management:**
-    - Created a `VERSION` file in the root directory to track the current project version (`0.1.0-alpha`).
-    - Established a versioning scheme (Semantic Versioning) to be used across the repository.
-- **Release Management:**
-    - Implemented a GitHub Action `.github/workflows/release.yml` that triggers on tag pushes starting with `v*`.
-    - Automated release notes generation and draft creation for standard releases.
-- **Teamwork Support:**
-    - Developed `CONTRIBUTING.md` to provide clear guidelines for new and existing contributors.
-    - Added a `.github/PULL_REQUEST_TEMPLATE.md` to standardize the documentation of code changes and ensure consistency in peer reviews.
-- **Automated Testing:**
-    - **Hardware Firmware (C++):** Created `.github/workflows/cpp_build.yml` to verify compilation of PlatformIO projects for MTP40-F sensors.
-    - **Software Systems (Python):** Integrated `pytest` for the `data_handler` component and set up `.github/workflows/python_tests.yml` to run tests and style checks (`flake8`).
+**Author:** Artur Kraskov  
+**Course:** ICT & OL, Delta — Fontys 2025-2026  
 
 ---
 
-## KPI: Manage&Control-S3.2
-**Requirement:** "Organise a development environment with automated build and test infrastructure."
+## Overview
 
-### Implementation Details:
-- **Environment Organization:**
-    - Created `requirements.txt` to centralize Python dependencies for the dashboard and data handling services.
-    - Implemented `requirements.py` as a helper script for developers to quickly set up their local environment.
-- **Automated Build Infrastructure:**
-    - Standardized build checks for firmware across multiple architectures (MicroPython and C++).
-    - Configured GitHub Actions to act as the primary build server, ensuring that every commit is validated before merging.
-- **MicroPython Quality Control:**
-    - Added `.github/workflows/micropython_lint.yml` using `ruff` to catch syntax errors and maintain code quality in the MicroPython scripts.
-    - Performed a large-scale refactor of existing MicroPython scripts to resolve 24 linting issues, ensuring the CI pipeline remains "green".
+This document describes the implementation of project management and control infrastructure for the **Thermal Grace** system. It covers version management, release automation, teamwork support, and automated testing for both hardware and software systems.
+
+### Key Points
+
+| Aspect | Summary |
+|--------|---------|
+| **Version Management** | Semantic versioning via `VERSION` file |
+| **Release Management** | GitHub Actions automated releases on tag push |
+| **Teamwork Support** | `CONTRIBUTING.md` + Pull Request templates |
+| **Automated Testing** | CI pipelines for C++, Python, and MicroPython |
+
+---
+
+## Table of Contents
+
+1. [Introduction](#introduction)
+2. [Background](#background)
+3. [What Was Implemented](#what-was-implemented)
+4. [KPI Reflection](#kpi-reflection)
+5. [Conclusion](#conclusion)
+6. [References](#references)
+
+---
+
+## Introduction
+
+This document details the development environment and project management infrastructure created to meet the Manage&Control KPIs. It ensures that all code changes are validated, releases are automated, and contributors have clear guidelines to follow.
+
+### Background
+
+The project follows a phased development approach:
+
+| Phase | Description | Deliverables |
+|-------|-------------|--------------|
+| **Analysis & Advice** | Project plan, requirements gathering | Project Plan [1], Requirements [2] |
+| **Design** | System architecture, C4 diagrams | C4 diagrams, Hardware Architecture [3] |
+| **Realization** | Implementation, testing, deployment | Source code, CI/CD pipelines |
+
+This document focuses on the **Realization** phase, specifically the infrastructure supporting code quality and release management.
+
+---
+
+## What Was Implemented
+
+### Version Management
+
+| Item | Description |
+|------|-------------|
+| `VERSION` file | Tracks current version (`0.1.0-alpha`) in repo root |
+| Semantic Versioning | Format: `MAJOR.MINOR.PATCH[-label]` |
+
+**Why:** Provides a single source of truth for the project version, enabling consistent versioning across documentation, releases, and code.
+
+---
+
+### Release Management
+
+| Item | Description |
+|------|-------------|
+| `.github/workflows/release.yml` | GitHub Action triggered on `v*` tags |
+| Auto-generated release notes | Uses GitHub's native release note generation |
+
+**How it works:** When a tag like `v1.0.0` is pushed, the workflow automatically creates a GitHub Release with generated release notes from commit history.
+
+---
+
+### Teamwork Support
+
+| Item | Description |
+|------|-------------|
+| `CONTRIBUTING.md` | Guidelines for contributing (forking, branching, testing, PRs) |
+| `.github/PULL_REQUEST_TEMPLATE.md` | Standard checklist for all pull requests |
+
+**Why:** Ensures consistent contribution practices and facilitates code review by providing structure to pull requests.
+
+---
+
+### Automated Testing
+
+Automated build and test pipelines were created for all major components of the system:
+
+#### C++ Firmware (PlatformIO)
+
+| Aspect | Details |
+|--------|---------|
+| **Workflow** | `.github/workflows/cpp_build.yml` |
+| **Projects** | `MTP40-F_CO2_sensor/MTP40-F`, `MTP40-F_CO2_sensor/MTP40F_MQTT` |
+| **Validation** | Compilation check via `pio run` |
+
+#### Python/Streamlit Dashboard
+
+| Aspect | Details |
+|--------|---------|
+| **Workflow** | `.github/workflows/python_tests.yml` |
+| **Testing** | `pytest` for thermal comfort model tests |
+| **Linting** | `flake8` style and syntax checks |
+
+#### MicroPython Firmware
+
+| Aspect | Details |
+|--------|---------|
+| **Workflow** | `.github/workflows/micropython_lint.yml` |
+| **Linting** | `ruff` for syntax and import checks |
+| **Directories** | `air_quality_mmWave_mqtt`, `bme680_air_quality_pi_pico_2_w`, `mmWave_pico_2_w`, `AMG_8833_Grid_eye` |
+
+**Fixes Applied:** Resolved 24 linting errors including:
+- Unused imports removed
+- Multiple imports on one line split
+- Unnecessary semicolons removed
+- Star imports replaced with explicit imports
+
+---
+
+## KPI Reflection
+
+### Manage&Control-H3.1
+
+> "Set up and make use of: version management, release management, teamwork support, automated testing for hard- and software systems."
+
+| Requirement | Implementation | Status |
+|-------------|----------------|--------|
+| Version management | `VERSION` file + semantic versioning | ✅ Met |
+| Release management | Automated GitHub Releases via Actions | ✅ Met |
+| Teamwork support | `CONTRIBUTING.md` + PR template | ✅ Met |
+| Automated testing (HW) | C++ build validation in CI | ✅ Met |
+| Automated testing (SW) | Python tests + linting in CI | ✅ Met |
+
+---
+
+### Manage&Control-S3.2
+
+> "Organise a development environment with automated build and test infrastructure."
+
+| Requirement | Implementation | Status |
+|-------------|----------------|--------|
+| Development environment | `requirements.txt` + `requirements.py` | ✅ Met |
+| Automated build | GitHub Actions for all firmware types | ✅ Met |
+| Automated test infrastructure | `pytest`, `flake8`, `ruff` in CI | ✅ Met |
+
+---
+
+## Conclusion
+
+The project management infrastructure meets all requirements for the Manage&Control KPIs:
+
+- **Versioned:** Clear semantic versioning with a central `VERSION` file
+- **Automated:** Releases and testing triggered on every push/PR
+- **Collaborative:** Contribution guidelines and PR templates in place
+- **Quality-assured:** All code validated via linting and compilation checks
+
+---
+
+## References
+
+1. Kraskov A., Kaszuba B., (2025), *Vitality HUB Perceived Thermal Comfort | Project Plan*, Thermal Comfort-as-a-Service (CaaS) IoT system, FHICT Delta.
+2. Kraskov A., Kaszuba B., (2025), *Vitality HUB Perceived Thermal Comfort | Requirements*, Thermal Comfort-as-a-Service (CaaS) IoT system, FHICT Delta.
+3. Kraskov A., (2025), *Thermal Grace — Hardware Architecture*, Technical Specification.
