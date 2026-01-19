@@ -14,7 +14,7 @@ Pico sensor nodes → MQTT → dashboard
 [![MQTT](https://img.shields.io/badge/MQTT-660066?logo=eclipse-mosquitto&logoColor=white)](https://mqtt.org/)
 [![Processing](https://img.shields.io/badge/Processing-006699?logo=processingfoundation&logoColor=white)](https://processing.org/)
 
-Presentation: https://drive.google.com/file/d/1HQB2eRdxE1k00cNu16dpNNQweOrkac1l
+Presentation: [system_specs/Thermal Grace.pdf](system_specs/Thermal%20Grace.pdf)
 
 Demo video: https://youtu.be/vrhQb1QjbCg (sensor values streaming, monitorng dashboard, PMV/PPD calcualtion, LLM assistant, mmWave radar 2D visualization, GRID-EYE heatmap over MQTT)
 

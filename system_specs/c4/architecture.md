@@ -21,33 +21,46 @@ This diagram details the internal components of the **Data Handler Dashboard** c
 
 ## 4. Component Details
 
-### 4.1 Edge Devices (Raspberry Pi Pico W)
+### 4.1 Edge Devices (Raspberry Pi Pico 2 W + Pi Zero 2 W)
 
-- **Hardware**: Raspberry Pi Pico W (RP2040 + WiFi)
-- **Firmware**: MicroPython
-- **Sensors Supported**:
-  - BME680: Temperature, humidity, air pressure, VOC
-  - mmWave Radar: Occupancy detection (2D)
-  - GRID-EYE: Thermal imaging (heatmap)
-- **Communication**: MQTT (paho-mqtt library)
-- **Power**: USB-C (5V)
+- **Pico 2 W (Air + mmWave node)**
+   - **Hardware**: Raspberry Pi Pico 2 W (RP2350 + Wi‑Fi)
+   - **Firmware**: MicroPython
+   - **Sensors**:
+      - BME680: temperature, humidity, pressure, VOC
+      - RD03D mmWave radar: occupancy targets
+   - **MQTT topic**: `sensors/pico/air_mmwave`
+
+- **Pico 2 W (CO₂ node)**
+   - **Hardware**: Raspberry Pi Pico 2 W (RP2350 + Wi‑Fi)
+   - **Firmware**: Arduino‑Pico / PlatformIO
+   - **Sensor**: MTP40‑F NDIR CO₂ (UART)
+   - **MQTT topic**: `sensors/pico/mtp40f/co2`
+
+- **Raspberry Pi Zero 2 W (Thermal node)**
+   - **Hardware**: Raspberry Pi Zero 2 W
+   - **Software**: Python
+   - **Sensor**: AMG8833 GRID‑EYE (I²C)
+   - **MQTT topic**: `sensors/thermal/amg8833`
+
+- **Communication**: MQTT over Wi‑Fi
+- **Power**: USB (5V)
 
 ### 4.2 MQTT Broker
 
 - **Software**: Mosquitto (or HiveMQ)
 - **Topics**:
-  - `sensors/pico1/bme680` - BME680 sensor data
-  - `sensors/pico1/radar` - Radar occupancy data
-  - `sensors/pico1/grideye` - GRID-EYE thermal data
-  - `feedback/user` - User feedback from survey app
+   - `sensors/pico/air_mmwave` - Combined BME680 environment + mmWave radar payload
+   - `sensors/pico/mtp40f/co2` - CO₂ ppm payload
+   - `sensors/thermal/amg8833` - AMG8833 thermal grid payload
 
 ### 4.3 Data Handler (Python)
 
 - **Location**: `data_handler/` directory
 - **Functionality**:
-  - Subscribe to MQTT topics
+   - Subscribe to MQTT topics (`sensors/pico/air_mmwave`, `sensors/pico/mtp40f/co2`)
   - Parse sensor data
-  - Store data in CSV files
+   - Store data in CSV files
   - Provide data to Streamlit app
   - Calculate PMV/PPD metrics
   - Integrate with external APIs
@@ -59,31 +72,26 @@ This diagram details the internal components of the **Data Handler Dashboard** c
   - **Live Metrics**: Real-time sensor data display
   - **Multi-User Comfort**: Adaptive PMV/PPD for multiple users
   - **LLM Assistant**: AI-powered insights and recommendations
-  - **Radar Visualization**: 2D occupancy heatmap
-  - **Thermal Visualization**: GRID-EYE thermal heatmap
   - **Weather Integration**: Real-time outdoor weather data
 
 ## 5. Data Flow
 
 1. **Sensor Data Acquisition**:
-   - Pico W reads sensors (BME680, Radar, GRID-EYE)
-   - Data is formatted as JSON
-   - JSON is published to MQTT broker
+   - Pico 2 W (Air + mmWave) reads BME680 + RD03D and publishes JSON to `sensors/pico/air_mmwave`
+   - Pico 2 W (CO₂) reads MTP40‑F and publishes JSON to `sensors/pico/mtp40f/co2`
+   - Pi Zero 2 W reads AMG8833 and publishes JSON to `sensors/thermal/amg8833`
 
 2. **Data Processing**:
-   - Data Handler subscribes to MQTT topics
+    - Data Handler subscribes to MQTT topics (`sensors/pico/air_mmwave`, `sensors/pico/mtp40f/co2`)
    - Sensor data is parsed and validated
-   - User feedback is processed from `feedback/user` topic
-   - Data is stored in CSV files:
-     - `sensor_data.csv` - Time-series sensor readings
-     - `responses.csv` - User feedback and comfort ratings
+    - Data is stored in CSV files:
+       - `live_metrics.csv` - Time-series sensor readings
+       - `responses.csv` - User feedback and comfort ratings
 
 3. **Visualization and Analysis**:
    - Streamlit app polls Data Handler for latest data
    - **Multi-User Comfort**: Calculates PMV/PPD for all users
    - **LLM Assistant**: Generates insights using GitHub LLM
-   - **Radar Visualization**: Displays occupancy heatmap
-   - **Thermal Visualization**: Displays thermal heatmap
    - **Weather Integration**: Fetches outdoor weather data
 
 ## 6. Key Features
@@ -109,9 +117,9 @@ This diagram details the internal components of the **Data Handler Dashboard** c
 
 ### 6.3 Advanced Sensor Integration
 
-- **mmWave Radar**: Occupancy detection with 2D visualization
-- **GRID-EYE**: Thermal imaging with heatmap visualization
+- **mmWave Radar**: Occupancy detection (target count)
 - **BME680**: Comprehensive environmental monitoring
+- **AMG8833 GRID‑EYE**: Thermal grid published on a separate Pi Zero 2 W
 
 ### 6.4 Weather Integration
 
@@ -121,51 +129,39 @@ This diagram details the internal components of the **Data Handler Dashboard** c
 
 ## 7. Technology Stack
 
-- **Hardware**: Raspberry Pi Pico W
-- **Firmware**: MicroPython
-- **Communication**: MQTT (paho-mqtt)
+- **Hardware**: Raspberry Pi Pico 2 W, Raspberry Pi Zero 2 W
+- **Firmware**: MicroPython (Pico), Arduino‑Pico/PlatformIO (CO₂ node)
+- **Communication**: MQTT (umqtt.simple / PubSubClient on devices, paho‑mqtt on backend)
 - **Backend**: Python 3.x
 - **Frontend**: Streamlit
 - **Data Storage**: CSV files
 - **AI/ML**: GitHub LLM API
-- **Sensors**: BME680, mmWave Radar, GRID-EYE
+- **Sensors**: BME680, RD03D mmWave, MTP40‑F CO₂, AMG8833 GRID‑EYE
 
 ## 8. Setup and Installation
 
 ### 8.1 Hardware Setup
 
-1. Connect sensors to Raspberry Pi Pico W:
+1. Connect sensors to Raspberry Pi Pico 2 W:
    - BME680: I2C (SCL/SDA/VCC/GND)
-   - mmWave Radar: GPIO (TX/RX/VCC/GND)
-   - GRID-EYE: SPI (MOSI/MISO/SCK/CS/VCC/GND)
+   - RD03D mmWave Radar: UART (TX/RX/VCC/GND)
+   - MTP40‑F CO₂: UART (TX/RX/VCC/GND)
 
-2. Power the Pico W via USB-C
+2. Connect AMG8833 to Raspberry Pi Zero 2 W:
+   - AMG8833: I2C (SDA/SCL/3.3V/GND)
+
+3. Power the devices via USB
 
 ### 8.2 Software Setup
 
-1. Install MicroPython on Pico W
-2. Install libraries:
-   ```bash
-   pip install paho-mqtt
-   pip install bme680
-   pip install adafruit-circuitpython-mlx90640
-   ```
-
+1. Install MicroPython on Pico 2 W (air + mmWave node)
+2. Flash PlatformIO firmware to Pico 2 W (CO₂ node)
 3. Install Data Handler dependencies:
-   ```bash
-   pip install streamlit paho-mqtt pandas requests
-   ```
-
-4. Configure MQTT:
-   - Update `data_handler/mqtt_config.py` with broker details
-
-5. Configure Weather API:
-   - Get API key from OpenWeatherMap
-   - Update `data_handler/weather_integration.py`
-
-6. Configure GitHub LLM:
-   - Get API token from GitHub
-   - Update `data_handler/llm_utils.py`
+   - `pip install streamlit paho-mqtt pandas requests buienradar pythermalcomfort`
+4. Configure MQTT broker:
+   - Update `HOST` / `PORT` in `data_handler/mqtt_monitor.py`
+5. Configure GitHub LLM:
+   - Set API token used by `data_handler/llm_utils.py`
 
 ### 8.3 Run the System
 
