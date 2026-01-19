@@ -1,0 +1,10 @@
+streamlit
+pandas
+paho-mqtt
+requests
+pythermalcomfort
+buienradar
+pytest
+flake8
+ruff
+platformio
