@@ -54,5 +54,5 @@ Each folder is self-documented; start with the README inside the directory you c
 - [AMG_8833_Grid_eye](AMG_8833_Grid_eye)/
   - 🌡️ Code for AMG8833 Grid-EYE thermal sensor.
 
-- system_specs/
+- [system_specs/](system_specs/)
   - 📐 System specifications, architecture notes, C4 diagrams, hardware specs, and planning requirements.
