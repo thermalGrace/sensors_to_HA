@@ -3,7 +3,7 @@
 
 from machine import Pin, I2C
 from time import sleep
-from bme680 import *
+from bme680 import BME680_I2C
 
 # RPi Pico - Pin assignment
 i2c = I2C(id=0, scl=Pin(5), sda=Pin(4))
@@ -27,7 +27,7 @@ while True:
     print('Pressure:', pres)
     print('Gas:', gas)
     print('-------')
-  except OSError as e:
+  except OSError:
     print('Failed to read sensor.')
  
   sleep(5)

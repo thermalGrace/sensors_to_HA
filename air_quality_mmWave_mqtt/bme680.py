@@ -3,7 +3,6 @@
 import time
 import math
 from micropython import const
-from ubinascii import hexlify as hex
 try:
   import struct
 except ImportError:

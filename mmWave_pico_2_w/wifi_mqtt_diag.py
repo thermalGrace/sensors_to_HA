@@ -1,7 +1,7 @@
 import time
 import network
 import rp2
-from umqtt.simple import MQTTClient, MQTTException
+from umqtt.simple import MQTTClient
 import socket
 
 SSID = "thermal_grace_iot_24"

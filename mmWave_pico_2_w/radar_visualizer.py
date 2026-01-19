@@ -115,7 +115,6 @@ def main():
         while True:
             with state_lock:
                 targets = list(latest_targets)
-                ts = last_timestamp
             polar_plot(targets)
             fig.canvas.draw()
             fig.canvas.flush_events()

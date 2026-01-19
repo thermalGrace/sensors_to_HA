@@ -3,7 +3,6 @@ import time
 import paho.mqtt.client as mqtt
 from amg8833_i2c import AMG8833
 import logging
-import subprocess
 import socket
 
 # Configuration

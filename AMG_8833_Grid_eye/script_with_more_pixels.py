@@ -7,7 +7,8 @@
 #
 #######################################################
 #
-import time,sys
+import time
+import sys
 sys.path.append('../')
 # load AMG8833 module
 import amg8833_i2c
@@ -34,7 +35,7 @@ time.sleep(0.1) # wait for sensor to settle
 # If no device is found, exit the script
 if sensor==[]:
     print("No AMG8833 Found - Check Your Wiring")
-    sys.exit(); # exit the app if AMG88xx is not found 
+    sys.exit() # exit the app if AMG88xx is not found 
 #
 #####################################
 # Interpolation Properties 

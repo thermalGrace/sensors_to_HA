@@ -1,5 +1,4 @@
 from rd03d import RD03D
-import time
 
 radar = RD03D()  # Defaults, multi-target mode and pins GP0/GP1
 

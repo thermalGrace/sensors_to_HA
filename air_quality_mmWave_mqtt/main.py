@@ -1,4 +1,7 @@
-import json, time, network, rp2
+import json
+import time
+import network
+import rp2
 from machine import I2C, Pin
 from umqtt.simple import MQTTClient, MQTTException
 from rd03d import RD03D
