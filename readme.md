@@ -65,17 +65,17 @@ This document describes the architecture of the **Thermal Grace** Perceived Ther
 ## Level 1: System Context Diagram
 This diagram shows the high-level system boundary and its interactions with users and external entities.
 
-![System Context Diagram](thermal_grace_c4_lvl1.png)
+![System Context Diagram](system_specs/c4/thermal_grace_c4_lvl1.png)
 
 ## Level 2: Container Diagram
 This diagram zooms into the **Thermal Grace System** to show its high-level executable units and data stores.
 
-![Container Diagram](thermal_grace_c4_lvl2.png)
+![Container Diagram](system_specs/c4/thermal_grace_c4_lvl2.png)
 
 ## Level 3: Component Diagram (Dashboard)
 This diagram details the internal components of the **Data Handler Dashboard** container.
 
-![Component Diagram](thermal_grace_c4_lvl3.png)
+![Component Diagram](system_specs/c4/thermal_grace_c4_lvl3.png)
 
 
 
