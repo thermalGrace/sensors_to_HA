@@ -56,3 +56,23 @@ Each folder is self-documented; start with the README inside the directory you c
 
 - system_specs/
   - 📐 System specification / architecture notes.
+ 
+
+# Thermal Grace - System Architecture
+
+This document describes the architecture of the **Thermal Grace** Perceived Thermal Comfort system using the [C4 model](https://c4model.com/).
+
+## Level 1: System Context Diagram
+This diagram shows the high-level system boundary and its interactions with users and external entities.
+
+![System Context Diagram](system_specs/c4/thermal_grace_c4_lvl1.png)
+
+## Level 2: Container Diagram
+This diagram zooms into the **Thermal Grace System** to show its high-level executable units and data stores.
+
+![Container Diagram](system_specs/c4/thermal_grace_c4_lvl2.png)
+
+## Level 3: Component Diagram (Dashboard)
+This diagram details the internal components of the **Data Handler Dashboard** container.
+
+![Component Diagram](system_specs/c4/thermal_grace_c4_lvl3.png)
