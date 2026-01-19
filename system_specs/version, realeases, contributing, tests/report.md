@@ -70,8 +70,11 @@ This document focuses on the **Realization** phase, specifically the infrastruct
 |------|-------------|
 | `.github/workflows/release.yml` | GitHub Action triggered on `v*` tags |
 | Auto-generated release notes | Uses GitHub's native release note generation |
+| Explicit permissions | `contents: write` granted for release creation |
 
 **How it works:** When a tag like `v1.0.0` is pushed, the workflow automatically creates a GitHub Release with generated release notes from commit history.
+
+**Verification:** Successfully tested with tag `v0.1.0-test` — release was created automatically.
 
 ---
 
@@ -103,8 +106,15 @@ Automated build and test pipelines were created for all major components of the 
 | Aspect | Details |
 |--------|---------|
 | **Workflow** | `.github/workflows/python_tests.yml` |
-| **Testing** | `pytest` for thermal comfort model tests |
+| **Testing** | `pytest` for thermal comfort model and core logic tests |
+| **Test Files** | `test.py`, `test_multi_user.py`, `tests/test_logic.py` |
 | **Linting** | `flake8` style and syntax checks |
+
+**Test Coverage:** Unit tests verify:
+- Comfort calculation (`estimate_met`, `estimate_clo`, `compute_comfort`)
+- MQTT payload parsing (`parse_env_from_payload`)
+- State-to-CSV mapping (`snapshot_to_row`)
+- LLM prompt building (`build_prompt_from_snapshot`, `build_multi_user_prompt`)
 
 #### MicroPython Firmware
 
