@@ -1,6 +1,6 @@
 # Thermal Grace — Version, Releases, Contributing & Tests
 
-> **Manage&Control KPIs Implementation**
+> **Project Infrastructure and Quality Assurance**
 
 **Author:** Artur Kraskov  
 **Course:** ICT & OL, Delta — Fontys 2025-2026  
@@ -27,7 +27,7 @@ This document describes the implementation of project management and control inf
 1. [Introduction](#introduction)
 2. [Background](#background)
 3. [What Was Implemented](#what-was-implemented)
-4. [KPI Reflection](#kpi-reflection)
+4. [Project Validation](#project-validation)
 5. [Conclusion](#conclusion)
 6. [References](#references)
 
@@ -35,7 +35,7 @@ This document describes the implementation of project management and control inf
 
 ## Introduction
 
-This document details the development environment and project management infrastructure created to meet the Manage&Control KPIs. It ensures that all code changes are validated, releases are automated, and contributors have clear guidelines to follow.
+This document details the development environment and project management infrastructure created for the Thermal Grace system. It ensures that all code changes are validated, releases are automated, and contributors have clear guidelines to follow.
 
 ### Background
 
@@ -132,42 +132,36 @@ Automated build and test pipelines were created for all major components of the 
 
 ---
 
-## KPI Reflection
+## Project Validation
 
-### Manage&Control-H3.1
+### Standards and Teamwork Support
 
-> "Set up and make use of: version management, release management, teamwork support, automated testing for hard- and software systems."
+**Objective:** Implement a professional foundation for the project through version tracking, automated releases, clear contribution guidelines, and continuous testing across all platforms.
 
-| Requirement | Implementation | Status |
-|-------------|----------------|--------|
-| Version management | `VERSION` file + semantic versioning | ✅ Met |
-| Release management | Automated GitHub Releases via Actions | ✅ Met |
-| Teamwork support | `CONTRIBUTING.md` + PR template | ✅ Met |
-| Automated testing (HW) | C++ build validation in CI | ✅ Met |
-| Automated testing (SW) | Python tests + linting in CI | ✅ Met |
+### Development Environment and Infrastructure
 
----
+**Mission:** Create a streamlined environment where code is automatically built, tested, and verified to maintain high reliability and performance.
 
-### Manage&Control-S3.2
-
-> "Organise a development environment with automated build and test infrastructure."
-
-| Requirement | Implementation | Status |
-|-------------|----------------|--------|
-| Development environment | `requirements.txt` + `requirements.py` | ✅ Met |
-| Automated build | GitHub Actions for all firmware types | ✅ Met |
-| Automated test infrastructure | `pytest`, `flake8`, `ruff` in CI | ✅ Met |
+| Objective | Implementation | Status |
+|-----------|----------------|--------|
+| **Version Management** | `VERSION` file + semantic versioning | ✅ Active |
+| **Release Management** | Automated GitHub Releases via Actions | ✅ Active |
+| **Teamwork Support** | `CONTRIBUTING.md` + PR template | ✅ Active |
+| **Automated Build** | GitHub Actions for all firmware types | ✅ Active |
+| **Test Infrastructure** | `pytest`, `flake8`, `ruff` in CI | ✅ Active |
 
 ---
 
 ## Conclusion
 
-The project management infrastructure meets all requirements for the Manage&Control KPIs:
+The recent infrastructure updates to the Thermal Grace repository represent a significant step forward in the project's maturity. By introducing automated testing and standardized versioning, we have shifted from a collection of experimental scripts to a robust, reliable system. 
 
-- **Versioned:** Clear semantic versioning with a central `VERSION` file
-- **Automated:** Releases and testing triggered on every push/PR
-- **Collaborative:** Contribution guidelines and PR templates in place
-- **Quality-assured:** All code validated via linting and compilation checks
+These changes were made to ensure that every component—from the low-level firmware to the data analysis tools—is automatically verified for correctness. For the development of the project, this means:
+- **Enhanced Stability:** New features can be added with the assurance that they won't break existing functionality.
+- **Transparent Progress:** Automated release tracking provides a clear history of how the system has evolved.
+- **Seamless Collaboration:** With clear contribution guidelines and automated safety nets, new developers can join the project and start contributing effectively from day one.
+
+As Thermal Grace continues to evolve, these foundational improvements ensure it remains a trustable and professional tool for monitoring indoor environmental comfort.
 
 ---
 
